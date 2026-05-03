@@ -5,67 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gemini Chat</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0f0f0f; --bg2: #1a1a1a; --bg3: #242424;
-    --border: rgba(255,255,255,0.08); --text: #e8e8e8; --text2: #888;
-    --accent: #4f8ef7; --accent2: #2d6fe0; --user-bg: #1e3a5f;
-  }
-  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-  #setup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; overflow-y: auto; }
-  .setup-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 24px 20px; max-width: 420px; width: 100%; }
-  .setup-card h2 { font-size: 18px; margin-bottom: 6px; color: var(--accent); }
-  .setup-card p { font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
-  .field-label { font-size: 12px; color: var(--text2); margin-bottom: 4px; margin-top: 12px; }
-  .setup-card input { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; direction: ltr; }
-  .setup-card input:focus { border-color: var(--accent); }
-  .hint { font-size: 11px; color: #555; margin-top: 5px; line-height: 1.5; direction: rtl; }
-  .btn-primary { width: 100%; background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
-  .btn-primary:hover { background: var(--accent2); }
-  header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg2); gap: 8px; flex-shrink: 0; }
-  .logo { font-size: 16px; font-weight: 600; color: var(--accent); white-space: nowrap; }
-  header select { background: var(--bg3); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 5px 8px; font-size: 12px; cursor: pointer; outline: none; direction: ltr; }
-  .hbtns { display: flex; gap: 6px; align-items: center; }
-  .btn-sm { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); border-radius: 8px; padding: 5px 9px; font-size: 11px; cursor: pointer; white-space: nowrap; }
-  .btn-sm:hover { color: var(--text); }
-  .sdot { width: 8px; height: 8px; border-radius: 50%; background: #555; flex-shrink: 0; transition: background 0.3s; }
-  .sdot.on { background: #4caf50; box-shadow: 0 0 6px #4caf5088; }
-  .sdot.busy { background: #ff9800; animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
-  #messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-  #messages::-webkit-scrollbar { width: 3px; }
-  #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  .msg { display: flex; gap: 8px; max-width: 88%; animation: fi 0.2s ease; }
-  @keyframes fi { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
-  .msg.user { align-self: flex-start; flex-direction: row-reverse; }
-  .msg.model { align-self: flex-end; }
-  .avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
-  .msg.user .avatar { background: var(--accent); color: white; }
-  .msg.model .avatar { background: #2a2a2a; color: var(--text2); border: 1px solid var(--border); }
-  .bubble { padding: 9px 13px; border-radius: 14px; font-size: 13.5px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-  .msg.user .bubble { background: var(--user-bg); border-bottom-right-radius: 4px; color: #d4e8ff; }
-  .msg.model .bubble { background: var(--bg2); border: 1px solid var(--border); border-bottom-left-radius: 4px; direction: auto; }
-  .bubble code { background: rgba(255,255,255,0.07); padding: 1px 5px; border-radius: 4px; font-family: monospace; font-size: 12px; }
-  .bubble pre { background: #111; border: 1px solid var(--border); border-radius: 8px; padding: 10px; overflow-x: auto; margin: 6px 0; direction: ltr; }
-  .bubble pre code { background: none; padding: 0; }
-  .bubble strong { color: #aed6f1; }
-  .tdot { display: inline-block; width: 5px; height: 5px; background: var(--text2); border-radius: 50%; animation: blink 1.2s infinite; margin: 0 2px; }
-  .tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
-  @keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
-  .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text2); }
-  .empty-state .icon { font-size: 36px; }
-  .empty-state p { font-size: 13px; text-align: center; }
-  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 0 16px; margin-top: 4px; }
-  .chip { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); border-radius: 16px; padding: 5px 12px; font-size: 12px; cursor: pointer; }
-  .chip:hover { border-color: var(--accent); color: var(--accent); }
-  footer { padding: 10px 14px; border-top: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
-  .input-row { display: flex; gap: 8px; align-items: flex-end; }
-  #prompt { flex: 1; background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; resize: none; outline: none; max-height: 130px; min-height: 40px; line-height: 1.5; font-family: inherit; direction: auto; }
-  #prompt:focus { border-color: rgba(79,142,247,0.5); }
-  #send-btn { background: var(--accent); color: white; border: none; border-radius: 9px; width: 40px; height: 40px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  #send-btn:hover { background: var(--accent2); }
-  #send-btn:disabled { background: #2a2a2a; cursor: not-allowed; }
-  .status-bar { font-size: 11px; color: var(--text2); text-align: center; margin-top: 5px; min-height: 16px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;
+  --border:rgba(255,255,255,0.08);--text:#e8e8e8;--text2:#888;
+  --accent:#4f8ef7;--accent2:#2d6fe0;--user-bg:#1e3a5f;
+}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+#setup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;overflow-y:auto;}
+.setup-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px 20px;max-width:420px;width:100%;}
+.setup-card h2{font-size:18px;margin-bottom:6px;color:var(--accent);}
+.setup-card p{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6;}
+.fl{font-size:12px;color:var(--text2);margin-bottom:4px;margin-top:12px;}
+.setup-card input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:13px;outline:none;direction:ltr;}
+.setup-card input:focus{border-color:var(--accent);}
+.hint{font-size:11px;color:#555;margin-top:5px;line-height:1.5;direction:rtl;}
+.btn-primary{width:100%;background:var(--accent);color:white;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;}
+.btn-primary:hover{background:var(--accent2);}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.logo{font-size:16px;font-weight:600;color:var(--accent);white-space:nowrap;}
+header select{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:12px;cursor:pointer;outline:none;direction:ltr;}
+.hbtns{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.btn-sm{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:5px 9px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.btn-sm:hover{color:var(--text);}
+.btn-sm.active{border-color:var(--accent);color:var(--accent);}
+.sdot{width:8px;height:8px;border-radius:50%;background:#555;flex-shrink:0;transition:background .3s;}
+.sdot.on{background:#4caf50;box-shadow:0 0 6px #4caf5088;}
+.sdot.busy{background:#ff9800;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;}
+#messages::-webkit-scrollbar{width:3px;}
+#messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.msg{display:flex;gap:8px;max-width:90%;animation:fi .2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-start;flex-direction:row-reverse;}
+.msg.model{align-self:flex-end;}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+.msg.user .avatar{background:var(--accent);color:white;}
+.msg.model .avatar{background:#2a2a2a;color:var(--text2);border:1px solid var(--border);}
+.bubble{padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.7;white-space:pre-wrap;word-break:break-word;}
+.msg.user .bubble{background:var(--user-bg);border-bottom-right-radius:4px;color:#d4e8ff;}
+.msg.model .bubble{background:var(--bg2);border:1px solid var(--border);border-bottom-left-radius:4px;direction:auto;}
+.bubble code{background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:12px;}
+.bubble pre{background:#111;border:1px solid var(--border);border-radius:8px;padding:10px;overflow-x:auto;margin:6px 0;direction:ltr;}
+.bubble pre code{background:none;padding:0;}
+.bubble strong{color:#aed6f1;}
+.bubble .src{font-size:11px;color:var(--accent);margin-top:6px;display:block;}
+.bubble .src a{color:var(--accent);text-decoration:none;}
+.bubble img{max-width:100%;border-radius:8px;margin-top:6px;}
+.tdot{display:inline-block;width:5px;height:5px;background:var(--text2);border-radius:50%;animation:blink 1.2s infinite;margin:0 2px;}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--text2);}
+.empty-state .icon{font-size:36px;}
+.suggestions{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 16px;margin-top:4px;}
+.chip{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:16px;padding:5px 12px;font-size:12px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+footer{padding:10px 14px;border-top:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
+.toolbar{display:flex;gap:6px;margin-bottom:7px;align-items:center;}
+.tool-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.tool-btn:hover,.tool-btn.on{border-color:var(--accent);color:var(--accent);}
+#img-preview{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px;}
+.prev-wrap{position:relative;display:inline-block;}
+.prev-wrap img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
+.prev-wrap .del{position:absolute;top:-5px;right:-5px;background:#333;border:none;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.input-row{display:flex;gap:8px;align-items:flex-end;}
+#prompt{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:9px 12px;font-size:13.5px;resize:none;outline:none;max-height:130px;min-height:40px;line-height:1.5;font-family:inherit;direction:auto;}
+#prompt:focus{border-color:rgba(79,142,247,0.5);}
+#send-btn{background:var(--accent);color:white;border:none;border-radius:9px;width:40px;height:40px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#send-btn:hover{background:var(--accent2);}
+#send-btn:disabled{background:#2a2a2a;cursor:not-allowed;}
+.sbar{font-size:11px;color:var(--text2);text-align:center;margin-top:5px;min-height:16px;}
+#file-input{display:none;}
 </style>
 </head>
 <body>
@@ -74,13 +85,13 @@
   <div class="setup-card">
     <h2>⚙️ تنظیمات اتصال</h2>
     <p>این چت از طریق GitHub Actions به Gemini وصل میشه — بدون VPN.</p>
-    <div class="field-label">GitHub Username</div>
-    <input id="cfg-user" placeholder="مثلاً: BloodyAssult" />
-    <div class="field-label">نام Repository</div>
-    <input id="cfg-repo" placeholder="مثلاً: gemini-chat" />
-    <div class="field-label">GitHub Personal Access Token</div>
-    <input id="cfg-token" type="password" placeholder="ghp_xxxxxxxxxxxx" />
-    <div class="hint">برو: github.com → Settings → Developer settings → Personal access tokens → Generate new token (classic) → فقط تیک <strong>repo</strong> رو بزن</div>
+    <div class="fl">GitHub Username</div>
+    <input id="cfg-user" placeholder="مثلاً: BloodyAssult"/>
+    <div class="fl">نام Repository</div>
+    <input id="cfg-repo" placeholder="مثلاً: gemini-chat"/>
+    <div class="fl">GitHub Personal Access Token</div>
+    <input id="cfg-token" type="password" placeholder="ghp_xxxxxxxxxxxx"/>
+    <div class="hint">Settings → Developer settings → Personal access tokens (classic) → فقط تیک <strong>repo → Contents: Read & Write</strong></div>
     <button class="btn-primary" onclick="saveConfig()">ذخیره و شروع</button>
   </div>
 </div>
@@ -93,7 +104,7 @@
     <option value="gemini-2.5-flash-preview-05-20">Gemini 2.5 Flash</option>
   </select>
   <div class="hbtns">
-    <div class="sdot" id="sdot" title="وضعیت"></div>
+    <div class="sdot" id="sdot"></div>
     <button class="btn-sm" onclick="clearChat()">پاک</button>
     <button class="btn-sm" onclick="showSetup()">تنظیم</button>
   </div>
@@ -105,25 +116,38 @@
     <p>ابتدا Actions رو توی GitHub اجرا کن، بعد بپرس</p>
     <div class="suggestions">
       <span class="chip" onclick="useChip(this)">سلام، چطوری؟</span>
+      <span class="chip" onclick="useChip(this)">آخرین اخبار هوش مصنوعی؟</span>
       <span class="chip" onclick="useChip(this)">یه کد پایتون بنویس</span>
-      <span class="chip" onclick="useChip(this)">هوش مصنوعی چیه؟</span>
     </div>
   </div>
 </div>
 
 <footer>
+  <div class="toolbar">
+    <button class="tool-btn" id="search-btn" onclick="toggleSearch()" title="جستجوی اینترنت">
+      🔍 <span>وب سرچ</span>
+    </button>
+    <button class="tool-btn" onclick="document.getElementById('file-input').click()" title="ارسال عکس">
+      🖼️ <span>عکس</span>
+    </button>
+    <input type="file" id="file-input" accept="image/*" multiple onchange="addImages(this)"/>
+  </div>
+  <div id="img-preview"></div>
   <div class="input-row">
     <textarea id="prompt" placeholder="پیامت رو بنویس..." rows="1"
       onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
     <button id="send-btn" onclick="sendMessage()">➤</button>
   </div>
-  <div class="status-bar" id="sbar">آماده</div>
+  <div class="sbar" id="sbar">آماده</div>
 </footer>
 
 <script>
-const HIST_KEY='gch_h', CFG_KEY='gch_c';
+const HIST_KEY='gch_h2', CFG_KEY='gch_c';
 let chatHistory=[], isLoading=false, cfg={};
+let pendingImages=[]; // [{base64, mime, preview}]
+let useSearch=false;
 
+// ── CONFIG ──
 function saveConfig(){
   const u=v('cfg-user'),r=v('cfg-repo'),t=v('cfg-token');
   if(!u||!r||!t){alert('همه فیلدها رو پر کن');return;}
@@ -144,6 +168,39 @@ function init(){
   if(s){cfg=JSON.parse(s);document.getElementById('setup-overlay').style.display='none';loadHistory();setSdot('on');}
 }
 
+// ── TOOLS ──
+function toggleSearch(){
+  useSearch=!useSearch;
+  document.getElementById('search-btn').classList.toggle('on',useSearch);
+}
+
+function addImages(input){
+  Array.from(input.files).forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const b64=e.target.result.split(',')[1];
+      const id=Math.random().toString(36).slice(2);
+      pendingImages.push({id,base64:b64,mime:file.type,preview:e.target.result});
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
+}
+
+function renderPreviews(){
+  const el=document.getElementById('img-preview');
+  el.innerHTML='';
+  pendingImages.forEach(img=>{
+    const w=document.createElement('div');w.className='prev-wrap';
+    const i=document.createElement('img');i.src=img.preview;
+    const d=document.createElement('button');d.className='del';d.textContent='×';
+    d.onclick=()=>{pendingImages=pendingImages.filter(x=>x.id!==img.id);renderPreviews();};
+    w.appendChild(i);w.appendChild(d);el.appendChild(w);
+  });
+}
+
+// ── GITHUB API ──
 const GH='https://api.github.com';
 function ghH(){return{'Authorization':`token ${cfg.token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};}
 
@@ -163,6 +220,7 @@ async function ghPut(path,content,sha){
   return r.ok;
 }
 
+// ── SEND ──
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
@@ -170,31 +228,48 @@ async function sendMessage(){
   if(isLoading)return;
   const el=document.getElementById('prompt');
   const text=el.value.trim();
-  if(!text)return;
+  if(!text&&pendingImages.length===0)return;
   if(!cfg.token){showSetup();return;}
+
   el.value='';el.style.height='auto';
   isLoading=true;
   document.getElementById('send-btn').disabled=true;
-  appendMsg('user',text);
-  chatHistory.push({role:'user',parts:[{text}]});
+
+  // build parts for this turn
+  const parts=[];
+  const imgs=[...pendingImages];
+  pendingImages=[];renderPreviews();
+
+  imgs.forEach(img=>parts.push({inline_data:{mime_type:img.mime,data:img.base64}}));
+  if(text)parts.push({text});
+
+  // show user message
+  appendMsg('user', text, imgs.map(i=>i.preview));
+  chatHistory.push({role:'user',parts});
+
   const id=uid();
   const model=document.getElementById('model-select').value;
-  setSdot('busy'); showTyping(); setSbar('⏳ ارسال به GitHub...');
+
+  setSdot('busy');showTyping();setSbar('⏳ ارسال...');
+
   try{
     const ex=await ghGet('queue/prompt.json');
-    const ok=await ghPut('queue/prompt.json',{id,model,contents:chatHistory},ex?.sha);
+    const payload={id,model,use_search:useSearch,contents:chatHistory};
+    const ok=await ghPut('queue/prompt.json',payload,ex?.sha);
     if(!ok)throw new Error('نوشتن prompt ناموفق — token یا repo رو چک کن');
+
     setSbar('⏳ Actions داره کار میکنه...');
-    const reply=await pollResponse(id);
+    const {reply,sources}=await pollResponse(id);
     removeTyping();
-    appendMsg('model',reply);
+    appendMsg('model',reply,null,sources);
     chatHistory.push({role:'model',parts:[{text:reply}]});
-    saveHistory(); setSdot('on'); setSbar(`✓ ${model}`);
+    saveHistory();setSdot('on');setSbar(`✓ ${model}${useSearch?' + 🔍':''}`);
   }catch(e){
     removeTyping();
     appendMsg('model',`❌ خطا: ${e.message}`);
-    setSdot('on'); setSbar('خطا');
+    setSdot('on');setSbar('خطا');
   }
+
   isLoading=false;
   document.getElementById('send-btn').disabled=false;
   el.focus();
@@ -202,31 +277,54 @@ async function sendMessage(){
 
 async function pollResponse(id){
   const path=`queue/response_${id}.json`;
-  const deadline=Date.now()+120000;
+  const deadline=Date.now()+180000;
   let i=0;
-  const msgs=['⏳ Actions داره کار میکنه.','⏳ Actions داره کار میکنه..','⏳ Actions داره کار میکنه...'];
+  const msgs=['⏳ در حال پردازش.','⏳ در حال پردازش..','⏳ در حال پردازش...'];
   while(Date.now()<deadline){
-    await sleep(3000);
+    await sleep(3500);
     setSbar(msgs[i++%3]);
     try{
       const res=await ghGet(path);
       if(res&&res.data){
-        const t=res.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if(t)return t;
+        const cand=res.data?.candidates?.[0];
+        const t=cand?.content?.parts?.[0]?.text;
+        if(t){
+          // extract sources
+          const chunks=cand?.grounding_metadata?.grounding_chunks||[];
+          const sources=chunks.map(c=>({title:c.web?.title||'',uri:c.web?.uri||''})).filter(s=>s.uri);
+          return{reply:t,sources};
+        }
         if(res.data?.error)throw new Error(res.data.error.message);
       }
-    }catch(e){if(e.message!=='')throw e;}
+    }catch(e){if(e.message&&!e.message.includes('null'))throw e;}
   }
   throw new Error('timeout — آیا Actions workflow اجراست؟');
 }
 
-function appendMsg(role,text){
+// ── UI ──
+function appendMsg(role,text,imagePreviews,sources){
   const empty=document.getElementById('empty-state');
   if(empty)empty.style.display='none';
   const msgs=document.getElementById('messages');
   const div=document.createElement('div');div.className=`msg ${role}`;
   const av=document.createElement('div');av.className='avatar';av.textContent=role==='user'?'ش':'G';
-  const bub=document.createElement('div');bub.className='bubble';bub.innerHTML=fmt(text);
+  const bub=document.createElement('div');bub.className='bubble';
+
+  if(imagePreviews&&imagePreviews.length){
+    imagePreviews.forEach(src=>{
+      const img=document.createElement('img');img.src=src;bub.appendChild(img);
+    });
+    if(text){const p=document.createElement('div');p.textContent=text;bub.appendChild(p);}
+  } else {
+    bub.innerHTML=fmt(text||'');
+  }
+
+  if(sources&&sources.length){
+    const s=document.createElement('div');s.className='src';
+    s.innerHTML='🔍 منابع: '+sources.slice(0,4).map((x,i)=>`<a href="${x.uri}" target="_blank">[${i+1}] ${x.title}</a>`).join(' ');
+    bub.appendChild(s);
+  }
+
   div.appendChild(av);div.appendChild(bub);msgs.appendChild(div);
   msgs.scrollTop=msgs.scrollHeight;
 }
@@ -251,6 +349,7 @@ function setSbar(t){document.getElementById('sbar').textContent=t;}
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,130)+'px';}
 function useChip(el){document.getElementById('prompt').value=el.textContent;sendMessage();}
+
 function clearChat(){
   if(!confirm('تاریخچه پاک بشه؟'))return;
   chatHistory=[];localStorage.removeItem(HIST_KEY);
@@ -258,9 +357,24 @@ function clearChat(){
 }
 function loadHistory(){
   const s=localStorage.getItem(HIST_KEY);
-  if(s){chatHistory=JSON.parse(s);chatHistory.forEach(m=>appendMsg(m.role,m.parts[0].text));}
+  if(s){
+    try{
+      chatHistory=JSON.parse(s);
+      chatHistory.forEach(m=>{
+        const t=m.parts.find(p=>p.text)?.text||'[عکس]';
+        appendMsg(m.role,t);
+      });
+    }catch(e){chatHistory=[];}
+  }
 }
-function saveHistory(){localStorage.setItem(HIST_KEY,JSON.stringify(chatHistory));}
+function saveHistory(){
+  // فقط text ها رو ذخیره کن (base64 حجم زیاد داره)
+  const lite=chatHistory.map(m=>({
+    role:m.role,
+    parts:[{text:m.parts.find(p=>p.text)?.text||'[عکس]'}]
+  }));
+  localStorage.setItem(HIST_KEY,JSON.stringify(lite));
+}
 init();
 </script>
 </body>
