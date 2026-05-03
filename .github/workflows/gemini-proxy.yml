@@ -19,63 +19,68 @@ jobs:
           pip install requests -q
 
           python3 << 'PYEOF'
-          import requests, json, time, os, base64, traceback
+import requests, json, time, os, base64, traceback
 
-          API_KEY = os.environ['GEMINI_API_KEY']
-          GH_TOKEN = os.environ['GH_TOKEN']
-          REPO = os.environ['REPO']
-          HEADERS = {
-              'Authorization': f'token {GH_TOKEN}',
-              'Content-Type': 'application/json',
-              'Accept': 'application/vnd.github.v3+json'
-          }
-          BASE = 'https://api.github.com'
+API_KEY = os.environ['GEMINI_API_KEY']
+GH_TOKEN = os.environ['GH_TOKEN']
+REPO = os.environ['REPO']
+HEADERS = {
+    'Authorization': f'token {GH_TOKEN}',
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.github.v3+json'
+}
+BASE = 'https://api.github.com'
 
-          def get_file(path):
-              r = requests.get(f'{BASE}/repos/{REPO}/contents/{path}', headers=HEADERS)
-              if r.status_code == 200:
-                  data = r.json()
-                  content = base64.b64decode(data['content']).decode('utf-8')
-                  return json.loads(content), data['sha']
-              return None, None
+def get_file(path):
+    r = requests.get(f'{BASE}/repos/{REPO}/contents/{path}?_={time.time()}', headers=HEADERS)
+    if r.status_code == 200:
+        data = r.json()
+        content = base64.b64decode(data['content']).decode('utf-8')
+        return json.loads(content), data['sha']
+    return None, None
 
-          def put_file(path, content, sha=None):
-              encoded = base64.b64encode(json.dumps(content, ensure_ascii=False).encode('utf-8')).decode()
-              body = {'message': f'proxy: update {path}', 'content': encoded}
-              if sha:
-                  body['sha'] = sha
-              r = requests.put(f'{BASE}/repos/{REPO}/contents/{path}', headers=HEADERS, json=body)
-              return r.status_code
+def put_file(path, content, sha=None):
+    encoded = base64.b64encode(json.dumps(content, ensure_ascii=False).encode('utf-8')).decode()
+    body = {'message': f'proxy: {path}', 'content': encoded}
+    if sha:
+        body['sha'] = sha
+    r = requests.put(f'{BASE}/repos/{REPO}/contents/{path}', headers=HEADERS, json=body)
+    return r.status_code in [200, 201]
 
-          def call_gemini(model, contents):
-              r = requests.post(
-                  f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
-                  json={'contents': contents},
-                  timeout=60
-              )
-              return r.json()
+def call_gemini(model, contents, use_search=False):
+    body = {'contents': contents}
+    if use_search:
+        body['tools'] = [{'google_search': {}}]
+    r = requests.post(
+        f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
+        json=body,
+        timeout=90
+    )
+    return r.json()
 
-          print('鉁� Gemini Proxy started 鈥� polling every 3 seconds...')
-          last_id = None
+print('✅ Gemini Proxy started (image + search support)')
+last_id = None
 
-          while True:
-              try:
-                  data, sha = get_file('queue/prompt.json')
-                  if data and data.get('id') and data.get('id') != last_id:
-                      req_id = data['id']
-                      last_id = req_id
-                      print(f'馃摠 Request [{req_id}] model={data.get("model")}')
+while True:
+    try:
+        data, sha = get_file('queue/prompt.json')
+        if data and data.get('id') and data.get('id') != last_id:
+            req_id = data['id']
+            last_id = req_id
+            model = data.get('model', 'gemini-3-flash-preview')
+            use_search = data.get('use_search', False)
+            print(f'📨 [{req_id}] model={model} search={use_search}')
 
-                      result = call_gemini(data['model'], data['contents'])
+            result = call_gemini(model, data['contents'], use_search)
 
-                      resp_path = f'queue/response_{req_id}.json'
-                      _, existing_sha = get_file(resp_path)
-                      status = put_file(resp_path, result, existing_sha)
-                      print(f'鉁� Response written [{req_id}] status={status}')
+            resp_path = f'queue/response_{req_id}.json'
+            _, existing_sha = get_file(resp_path)
+            ok = put_file(resp_path, result, existing_sha)
+            print(f'✅ [{req_id}] written={ok}')
 
-              except Exception as e:
-                  print(f'鈿狅笍 Error: {e}')
-                  traceback.print_exc()
+    except Exception as e:
+        print(f'⚠️ {e}')
+        traceback.print_exc()
 
-              time.sleep(3)
-          PYEOF
+    time.sleep(3)
+PYEOF
