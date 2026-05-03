@@ -1,1 +1,1 @@
-{"id":"u0zsmvmrc3moq23tae","model":"gemini-3-flash-preview","use_search":false,"contents":[{"role":"user","parts":[{"text":"سلام، چطوری؟"}]}]}
+{"id":"p2xu1l9ckwmoq24b65","model":"gemini-3.1-pro-preview","use_search":false,"contents":[{"role":"user","parts":[{"text":"سلام، چطوری؟"}]},{"role":"model","parts":[{"text":"سلام! خیلی ممنون، من خوبم. تو چطوری؟ چه کمکی می‌تونم بهت بکنم؟"}]},{"role":"user","parts":[{"text":"اختصاصیت و حساسیت در screening test چی هستن کامل توضیح بده انگلیسیشون بنویس و اینکه ارتباطشان با pcr چیه"}]}]}
