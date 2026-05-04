@@ -19,47 +19,47 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 /* SETUP */
 #setup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;overflow-y:auto;backdrop-filter:blur(10px);}
 .setup-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px 24px;max-width:460px;width:100%;box-shadow:0 0 60px rgba(108,142,247,0.1);}
-.setup-card h2{font-size:20px;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.setup-card p{font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.7;}
-.provider-tabs{display:flex;gap:8px;margin-bottom:20px;}
-.ptab{flex:1;padding:10px;border-radius:12px;border:1px solid var(--border);cursor:pointer;text-align:center;transition:all .2s;background:var(--bg3);}
-.ptab.active{border-color:var(--accent);background:rgba(108,142,247,0.1);}
-.ptab-title{font-size:13px;font-weight:600;color:var(--text);}
-.ptab-sub{font-size:10px;color:var(--text2);margin-top:3px;}
-.ptab.active .ptab-title{color:var(--accent);}
-.provider-section{display:none;}.provider-section.active{display:block;}
-.puter-info{background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:14px;font-size:12px;color:var(--text2);line-height:1.9;}
-.puter-info strong{color:var(--green);}
+.setup-card h2{font-size:20px;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.setup-card .sub{font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.7;}
+.ptabs{display:flex;gap:8px;margin-bottom:20px;}
+.ptab{flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);cursor:pointer;text-align:center;transition:all .2s;background:var(--bg3);}
+.ptab.active{border-color:var(--accent);background:rgba(108,142,247,0.08);}
+.ptab-t{font-size:13px;font-weight:600;color:var(--text);}
+.ptab-s{font-size:10px;color:var(--text2);margin-top:3px;}
+.ptab.active .ptab-t{color:var(--accent);}
+.psec{display:none;}.psec.active{display:block;}
+.info-box{border-radius:12px;padding:14px;font-size:12px;line-height:1.9;margin-bottom:4px;}
+.info-box.green{background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.2);color:var(--text2);}
+.info-box.green strong{color:var(--green);}
+.info-box.blue{background:rgba(108,142,247,0.05);border:1px solid rgba(108,142,247,0.2);color:var(--text2);}
+.info-box.blue strong{color:var(--accent);}
+.info-box.warn{background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);color:#d4a017;font-size:11px;margin-top:8px;}
 .fl{font-size:11px;color:var(--text2);margin-bottom:5px;margin-top:14px;letter-spacing:.5px;text-transform:uppercase;}
 .setup-card input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:10px 14px;font-size:13px;outline:none;direction:ltr;transition:border .2s;}
 .setup-card input:focus{border-color:var(--accent);}
 .hint{font-size:11px;color:#444;margin-top:6px;line-height:1.6;direction:rtl;}
-.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;margin-top:18px;transition:opacity .2s;}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;margin-top:18px;}
 .btn-primary:hover{opacity:.9;}
 
 /* LAYOUT */
 .app-body{flex:1;display:flex;overflow:hidden;}
-
-/* SIDEBAR */
 #sidebar{width:230px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s;}
 #sidebar.collapsed{width:0;overflow:hidden;}
-.sidebar-header{padding:12px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
-.sidebar-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.5px;}
-.btn-new{background:var(--bg3);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;white-space:nowrap;}
-.btn-new:hover{background:var(--bg4);}
+.sb-head{padding:12px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sb-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.5px;}
+.btn-new{background:var(--bg3);border:1px solid var(--border);color:var(--accent);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;}
 #session-list{flex:1;overflow-y:auto;padding:6px;}
 #session-list::-webkit-scrollbar{width:3px;}
 #session-list::-webkit-scrollbar-thumb{background:var(--border);}
-.session-item{padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:3px;position:relative;transition:background .15s;}
-.session-item:hover{background:var(--bg3);}
-.session-item.active{background:var(--bg4);border:1px solid var(--border);}
-.session-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.session-meta{font-size:10px;color:var(--text2);margin-top:2px;display:flex;gap:5px;align-items:center;}
-.session-provider{font-size:9px;padding:1px 5px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);}
-.session-del{position:absolute;left:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;font-size:14px;cursor:pointer;opacity:0;}
-.session-item:hover .session-del{opacity:1;}
-.session-del:hover{color:#f66;}
-.no-sessions{font-size:12px;color:var(--text2);text-align:center;padding:20px 8px;}
+.si{padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:3px;position:relative;transition:background .15s;}
+.si:hover{background:var(--bg3);}
+.si.active{background:var(--bg4);border:1px solid var(--border);}
+.si-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.si-meta{font-size:10px;color:var(--text2);margin-top:2px;display:flex;gap:5px;}
+.si-del{position:absolute;left:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;font-size:14px;cursor:pointer;opacity:0;}
+.si:hover .si-del{opacity:1;}
+.si-del:hover{color:#f66;}
+.no-sess{font-size:12px;color:var(--text2);text-align:center;padding:20px 8px;}
 
 /* HEADER */
 .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
@@ -67,16 +67,15 @@ header{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid
 .btn-icon{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px;border-radius:6px;}
 .btn-icon:hover{color:var(--text);background:var(--bg3);}
 .logo{font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
-#session-title-bar{flex:1;font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
-.provider-badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
-.provider-badge.puter{color:var(--green);border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.08);}
-.provider-badge.api{color:var(--accent);border-color:var(--border);background:rgba(108,142,247,0.08);}
+#title-bar{flex:1;font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
+.pbadge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid;}
+.pbadge.api{color:var(--accent);border-color:var(--border);background:rgba(108,142,247,0.08);}
+.pbadge.puter{color:var(--green);border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.08);}
 header select{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:12px;cursor:pointer;outline:none;direction:ltr;}
 .hbtns{display:flex;gap:6px;align-items:center;}
-.btn-sm{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:5px 9px;font-size:11px;cursor:pointer;white-space:nowrap;}
-.btn-sm:hover{color:var(--text);}
+.btn-sm{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:5px 9px;font-size:11px;cursor:pointer;}
 .sdot{width:7px;height:7px;border-radius:50%;background:#333;flex-shrink:0;}
-.sdot.on{background:var(--green);box-shadow:0 0 8px rgba(74,222,128,0.5);}
+.sdot.on{background:var(--green);box-shadow:0 0 8px rgba(74,222,128,.5);}
 .sdot.busy{background:#f59e0b;animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 
@@ -84,7 +83,7 @@ header select{background:var(--bg3);color:var(--text);border:1px solid var(--bor
 #messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;}
 #messages::-webkit-scrollbar{width:4px;}
 #messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-.msg{display:flex;gap:8px;max-width:88%;animation:msgIn .25s cubic-bezier(.34,1.56,.64,1);}
+.msg{display:flex;gap:8px;max-width:90%;animation:msgIn .25s cubic-bezier(.34,1.56,.64,1);}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
 .msg.user{align-self:flex-start;flex-direction:row-reverse;}
 .msg.model{align-self:flex-end;}
@@ -99,14 +98,12 @@ header select{background:var(--bg3);color:var(--text);border:1px solid var(--bor
 .bubble pre code{background:none;padding:0;color:#c8dcff;}
 .bubble strong{color:#aed6f1;}.bubble em{color:#c8b8ff;}
 .bubble img{max-width:100%;border-radius:10px;margin-top:8px;border:1px solid var(--border);}
-.sources{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px;}
-.src-chip{background:var(--bg3);border:1px solid var(--border);color:var(--accent);border-radius:20px;padding:3px 10px;font-size:11px;text-decoration:none;}
-.src-chip:hover{background:var(--bg4);}
+.srcs{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px;}
+.sc{background:var(--bg3);border:1px solid var(--border);color:var(--accent);border-radius:20px;padding:3px 10px;font-size:11px;text-decoration:none;}
 
 /* TYPING */
-.typing-bubble{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--model-bg);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:4px;}
-.wave{display:flex;gap:4px;align-items:center;}
-.wdot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:wave 1.3s ease infinite;}
+.tbubble{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--model-bg);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:4px;}
+.wave{display:flex;gap:4px;}.wdot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:wave 1.3s ease infinite;}
 .wdot:nth-child(2){animation-delay:.15s;}.wdot:nth-child(3){animation-delay:.3s;}
 @keyframes wave{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 .tl{font-size:12px;color:var(--text2);}
@@ -118,105 +115,104 @@ header select{background:var(--bg3);color:var(--text);border:1px solid var(--bor
 .empty-state p{font-size:13px;color:var(--text2);text-align:center;max-width:300px;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
 .chip{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:20px;padding:7px 14px;font-size:12.5px;cursor:pointer;transition:all .2s;}
-.chip:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,0.08);}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
 
 /* FOOTER */
 footer{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(--bg2);flex-shrink:0;}
-.toolbar{display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap;}
-.tool-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;}
-.tool-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,0.08);}
-.tool-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,0.1);}
-.tool-btn.disabled{opacity:.3;pointer-events:none;}
+.toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.tbtn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap;}
+.tbtn:hover{border-color:var(--accent);color:var(--accent);}
+.tbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,.1);}
+.tbtn.off{opacity:.3;pointer-events:none;}
 #img-preview{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
-.prev-wrap{position:relative;}
-.prev-wrap img{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--border);}
-.prev-wrap .del{position:absolute;top:-4px;right:-4px;background:#1a1a2e;border:1px solid var(--border);color:var(--text2);border-radius:50%;width:16px;height:16px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pw{position:relative;}
+.pw img{width:54px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--border);}
+.pw .del{position:absolute;top:-4px;right:-4px;background:#1a1a2e;border:1px solid var(--border);color:var(--text2);border-radius:50%;width:16px;height:16px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .input-row{display:flex;gap:8px;align-items:flex-end;}
 #prompt{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 14px;font-size:14px;resize:none;outline:none;max-height:140px;min-height:42px;line-height:1.6;font-family:inherit;direction:auto;transition:border .2s;}
-#prompt:focus{border-color:rgba(108,142,247,0.5);box-shadow:0 0 0 3px rgba(108,142,247,0.05);}
+#prompt:focus{border-color:rgba(108,142,247,.5);box-shadow:0 0 0 3px rgba(108,142,247,.05);}
 #send-btn{background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;border:none;border-radius:11px;width:42px;height:42px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;box-shadow:0 4px 15px var(--glow);}
 #send-btn:hover{transform:scale(1.05);}
 #send-btn:disabled{background:var(--bg3);box-shadow:none;cursor:not-allowed;transform:none;}
 .sbar{font-size:11px;color:var(--text2);text-align:center;margin-top:6px;min-height:16px;display:flex;align-items:center;justify-content:center;gap:6px;}
-.sbar-progress{width:60px;height:2px;background:var(--bg3);border-radius:2px;overflow:hidden;}
-.sbar-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:2px;animation:prg 2s ease infinite;width:40%;}
+.sprg{width:60px;height:2px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.sprgI{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:2px;animation:prg 2s ease infinite;width:40%;}
 @keyframes prg{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
 #file-input{display:none;}
-
-/* MODEL GROUPS */
-.model-group-label{font-size:10px;color:var(--text2);}
 </style>
 </head>
 <body>
 
-<!-- SETUP -->
 <div id="setup-overlay">
   <div class="setup-card">
     <h2>✦ Gemini Chat</h2>
-    <p>دو روش اتصال — یکی رو انتخاب کن:</p>
-    <div class="provider-tabs">
-      <div class="ptab active" onclick="selectTab('puter')">
-        <div class="ptab-title">🟢 Puter.js</div>
-        <div class="ptab-sub">رایگان، بدون API key</div>
+    <div class="sub">روش اتصال رو انتخاب کن:</div>
+    <div class="ptabs">
+      <div class="ptab active" onclick="selTab('api')">
+        <div class="ptab-t">⚙️ GitHub Actions</div>
+        <div class="ptab-s">بدون VPN ✅</div>
       </div>
-      <div class="ptab" onclick="selectTab('api')">
-        <div class="ptab-title">⚙️ API خودت</div>
-        <div class="ptab-sub">GitHub Actions</div>
+      <div class="ptab" onclick="selTab('puter')">
+        <div class="ptab-t">🟢 Puter.js</div>
+        <div class="ptab-s">با VPN — رایگان‌تر</div>
       </div>
     </div>
-    <div class="provider-section active" id="section-puter">
-      <div class="puter-info">
-        <strong>✅ کاملاً رایگان</strong> — بدون API key، بدون quota<br>
-        <strong>✅ وب سرچ</strong> — با مدل‌های OpenAI<br>
+
+    <div class="psec active" id="sec-api">
+      <div class="info-box blue">
+        <strong>✅ بدون VPN</strong> — فقط github.com که وایت‌لیسته<br>
+        <strong>✅ وب سرچ</strong> — با DuckDuckGo رایگان<br>
         <strong>✅ آنالیز عکس</strong> — آپلود از گوشی<br>
-        <strong>✅ تولید عکس</strong> — با Gemini Image<br>
-        <strong>✅ Streaming</strong> — پاسخ‌ها تایپ میشن<br>
-        <strong>✅ همه مدل‌ها</strong> — Gemini, GPT, Claude و...
+        <strong>✅ حافظه چت</strong> — تاریخچه کامل
       </div>
-      <div style="font-size:11px;color:#555;margin-top:10px;text-align:center">نیازی به ثبت‌نام نیست — همین الان شروع کن</div>
-    </div>
-    <div class="provider-section" id="section-api">
-      <div class="fl">GitHub Username</div><input id="cfg-user" placeholder="BloodyAssult"/>
-      <div class="fl">نام Repository</div><input id="cfg-repo" placeholder="gemini-chat"/>
-      <div class="fl">GitHub Personal Access Token</div>
+      <div class="fl">GitHub Username</div>
+      <input id="cfg-user" placeholder="مثلاً: BloodyAssult"/>
+      <div class="fl">نام Repository</div>
+      <input id="cfg-repo" placeholder="مثلاً: gemini-chat"/>
+      <div class="fl">GitHub Token (Contents: Read & Write)</div>
       <input id="cfg-token" type="password" placeholder="ghp_xxxxxxxxxxxx"/>
-      <div class="hint">Settings → Developer settings → Tokens (classic) → تیک repo → Contents: Read & Write</div>
+      <div class="hint">⚠️ Actions رو توی GitHub اجرا کن قبل از چت</div>
     </div>
-    <button class="btn-primary" onclick="saveConfig()">شروع کن ✦</button>
+
+    <div class="psec" id="sec-puter">
+      <div class="info-box green">
+        <strong>✅ همه مدل‌ها رایگان</strong> — Gemini Pro, GPT, Claude<br>
+        <strong>✅ وب سرچ، عکس، تولید تصویر</strong><br>
+        <strong>✅ Streaming</strong>
+      </div>
+      <div class="info-box warn">⚠️ نیاز به VPN داره — puter.com از ایران بلاکه</div>
+    </div>
+
+    <button class="btn-primary" onclick="saveConfig()">ذخیره و شروع ✦</button>
   </div>
 </div>
 
 <div class="app-body">
   <div id="sidebar">
-    <div class="sidebar-header">
-      <span class="sidebar-title">تاریخچه</span>
+    <div class="sb-head">
+      <span class="sb-title">تاریخچه</span>
       <button class="btn-new" onclick="newSession()">+ جدید</button>
     </div>
-    <div id="session-list"><div class="no-sessions">هنوز چتی نداری</div></div>
+    <div id="session-list"><div class="no-sess">هنوز چتی نداری</div></div>
   </div>
 
   <div class="chat-area">
     <header>
-      <button class="btn-icon" onclick="toggleSidebar()">☰</button>
+      <button class="btn-icon" onclick="toggleSb()">☰</button>
       <span class="logo">✦</span>
-      <span id="session-title-bar">چت جدید</span>
-      <div id="provider-badge" class="provider-badge puter">Puter</div>
-      <select id="model-select" onchange="onModelChange()">
-        <optgroup label="── Gemini (Puter+API)">
+      <span id="title-bar">چت جدید</span>
+      <div id="pbadge" class="pbadge api">Actions</div>
+      <select id="model-sel">
+        <optgroup label="Gemini">
           <option value="gemini-3-flash-preview">Gemini 3 Flash</option>
-          <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro ⭐</option>
-          <option value="gemini-3.1-flash-lite-preview">Gemini 3.1 Flash Lite</option>
+          <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
           <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
           <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
         </optgroup>
-        <optgroup label="── تولید عکس (Puter)">
-          <option value="gemini-2.5-flash-image">Gemini Image (Flash)</option>
-          <option value="gemini-3.1-flash-image-preview">Gemini Image 3.1</option>
-        </optgroup>
-        <optgroup label="── سرچ / چندمنظوره (Puter)">
-          <option value="openai/gpt-5.2-chat">GPT-5.2 (وب سرچ)</option>
-          <option value="claude-sonnet-4-6">Claude Sonnet 4.6</option>
-          <option value="gpt-4o">GPT-4o</option>
+        <optgroup label="Puter only">
+          <option value="gemini-3.1-flash-image-preview">🎨 Gemini Image</option>
+          <option value="openai/gpt-5.2-chat">GPT-5.2 (سرچ)</option>
+          <option value="claude-sonnet-4-6">Claude Sonnet</option>
         </optgroup>
       </select>
       <div class="hbtns">
@@ -229,28 +225,27 @@ footer{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(
       <div class="empty-state" id="empty-state">
         <div class="empty-icon">✦</div>
         <h3>Gemini Chat</h3>
-        <p id="empty-desc">Puter.js آماده‌ست — وب سرچ، عکس، تولید تصویر — همه رایگان!</p>
+        <p id="empty-desc">Actions رو توی GitHub اجرا کن، بعد بپرس</p>
         <div class="chips">
           <span class="chip" onclick="useChip(this)">سلام! چی میتونی بکنی؟</span>
-          <span class="chip" onclick="useChip(this)">آخرین خبرهای هوش مصنوعی</span>
-          <span class="chip" onclick="useChip(this)">یه گربه بکش 🎨</span>
-          <span class="chip" onclick="useChip(this)">یه کد پایتون بنویس</span>
+          <span class="chip" onclick="useChip(this)">آخرین خبرهای AI</span>
+          <span class="chip" onclick="useChip(this)">یه کد Python بنویس</span>
         </div>
       </div>
     </div>
 
     <footer>
-      <div class="toolbar" id="toolbar">
-        <button class="tool-btn" id="search-btn" onclick="toggleSearch()">🔍 وب سرچ</button>
-        <button class="tool-btn" id="img-btn" onclick="document.getElementById('file-input').click()">🖼️ آنالیز عکس</button>
-        <button class="tool-btn" id="imggen-btn" onclick="toggleImgGen()">🎨 تولید عکس</button>
-        <input type="file" id="file-input" accept="image/*" multiple onchange="addImages(this)"/>
+      <div class="toolbar">
+        <button class="tbtn" id="btn-search" onclick="toggleSearch()">🔍 وب سرچ</button>
+        <button class="tbtn" id="btn-img" onclick="document.getElementById('file-input').click()">🖼️ عکس</button>
+        <button class="tbtn off" id="btn-imggen" onclick="toggleImgGen()">🎨 تولید عکس</button>
+        <input type="file" id="file-input" accept="image/*" multiple onchange="addImgs(this)"/>
       </div>
       <div id="img-preview"></div>
       <div class="input-row">
         <textarea id="prompt" placeholder="پیامت رو بنویس..." rows="1"
-          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button id="send-btn" onclick="sendMessage()">➤</button>
+          onkeydown="onKey(event)" oninput="autoResize(this)"></textarea>
+        <button id="send-btn" onclick="send()">➤</button>
       </div>
       <div class="sbar" id="sbar">آماده</div>
     </footer>
@@ -258,80 +253,58 @@ footer{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(
 </div>
 
 <script>
-const SESS_KEY='gch_s_v4', CFG_KEY='gch_c2', ACT_KEY='gch_a2';
-let cfg={provider:'puter'}, sessions={}, activeId=null;
-let isLoading=false, useSearch=false, useImgGen=false, pendingImages=[];
-let selTab='puter';
+const SK='gch_s5',CK='gch_c3',AK='gch_a3';
+let cfg={provider:'api'}, sessions={}, activeId=null;
+let loading=false, doSearch=false, doImgGen=false, pendImgs=[];
+let curSelTab='api';
 
 // ── INIT ──
 function init(){
-  const c=localStorage.getItem(CFG_KEY);
+  const c=localStorage.getItem(CK);
   if(c){cfg=JSON.parse(c);document.getElementById('setup-overlay').style.display='none';}
-  const s=localStorage.getItem(SESS_KEY);
+  const s=localStorage.getItem(SK);
   if(s)try{sessions=JSON.parse(s);}catch(e){}
-  renderSessionList();
-  const last=localStorage.getItem(ACT_KEY);
-  if(last&&sessions[last])loadSession(last);
-  else newSession();
-  updateProviderUI();
-  onModelChange();
+  renderSessions();
+  const last=localStorage.getItem(AK);
+  if(last&&sessions[last])loadSess(last); else newSession();
+  applyProviderUI();
 }
 
 // ── SETUP ──
-function selectTab(p){
-  selTab=p;
-  document.querySelectorAll('.ptab').forEach((el,i)=>el.classList.toggle('active',(p==='puter'&&i===0)||(p==='api'&&i===1)));
-  document.getElementById('section-puter').classList.toggle('active',p==='puter');
-  document.getElementById('section-api').classList.toggle('active',p==='api');
+function selTab(p){
+  curSelTab=p;
+  document.querySelectorAll('.ptab').forEach((el,i)=>el.classList.toggle('active',(p==='api'&&i===0)||(p==='puter'&&i===1)));
+  document.getElementById('sec-api').classList.toggle('active',p==='api');
+  document.getElementById('sec-puter').classList.toggle('active',p==='puter');
 }
 function saveConfig(){
-  if(selTab==='api'){
+  if(curSelTab==='api'){
     const u=gv('cfg-user'),r=gv('cfg-repo'),t=gv('cfg-token');
     if(!u||!r||!t){alert('همه فیلدها رو پر کن');return;}
     cfg={provider:'api',user:u,repo:r,token:t};
   } else {cfg={provider:'puter'};}
-  localStorage.setItem(CFG_KEY,JSON.stringify(cfg));
+  localStorage.setItem(CK,JSON.stringify(cfg));
   document.getElementById('setup-overlay').style.display='none';
-  updateProviderUI();
+  applyProviderUI();
 }
 function showSetup(){
-  if(cfg.user)document.getElementById('cfg-user').value=cfg.user||'';
-  if(cfg.repo)document.getElementById('cfg-repo').value=cfg.repo||'';
-  if(cfg.token)document.getElementById('cfg-token').value=cfg.token||'';
-  selectTab(cfg.provider||'puter');
+  selTab(cfg.provider||'api');
+  if(cfg.user)document.getElementById('cfg-user').value=cfg.user;
+  if(cfg.repo)document.getElementById('cfg-repo').value=cfg.repo;
+  if(cfg.token)document.getElementById('cfg-token').value=cfg.token;
   document.getElementById('setup-overlay').style.display='flex';
 }
 function gv(id){return document.getElementById(id).value.trim();}
 
-function updateProviderUI(){
+function applyProviderUI(){
   const isPuter=cfg.provider==='puter';
-  const badge=document.getElementById('provider-badge');
-  badge.textContent=isPuter?'Puter':'API';
-  badge.className='provider-badge '+(isPuter?'puter':'api');
-  // In API mode, disable imggen; in puter mode, enable all
-  document.getElementById('imggen-btn').classList.toggle('disabled',!isPuter);
-  setSdot('on');
-}
-
-// ── MODEL CHANGE ──
-function onModelChange(){
-  const m=document.getElementById('model-select').value;
-  const isImgModel=m.includes('image');
-  // auto-enable imggen mode if image model selected
-  if(isImgModel){
-    useImgGen=true;
-    document.getElementById('imggen-btn').classList.add('on');
-    document.getElementById('search-btn').classList.add('disabled');
-  } else {
-    useImgGen=false;
-    document.getElementById('imggen-btn').classList.remove('on');
-    document.getElementById('search-btn').classList.remove('disabled');
-  }
-  // GPT-5.2 is the web search model
-  if(m==='openai/gpt-5.2-chat'&&cfg.provider==='puter'){
-    useSearch=true;
-    document.getElementById('search-btn').classList.add('on');
-  }
+  const badge=document.getElementById('pbadge');
+  badge.textContent=isPuter?'Puter':'Actions';
+  badge.className='pbadge '+(isPuter?'puter':'api');
+  document.getElementById('btn-imggen').classList.toggle('off',!isPuter);
+  // Update empty state text
+  const ed=document.getElementById('empty-desc');
+  if(ed)ed.textContent=isPuter?'Puter آماده‌ست — بپرس!':'Actions رو توی GitHub اجرا کن، بعد بپرس';
 }
 
 // ── SESSIONS ──
@@ -339,100 +312,84 @@ function genId(){return 's'+Date.now().toString(36)+Math.random().toString(36).s
 function newSession(){
   const id=genId();
   sessions[id]={id,title:'چت جدید',history:[],provider:cfg.provider,created:Date.now()};
-  saveSessions();loadSession(id);
+  saveSess();loadSess(id);
 }
-function loadSession(id){
-  activeId=id;
-  localStorage.setItem(ACT_KEY,id);
+function loadSess(id){
+  activeId=id;localStorage.setItem(AK,id);
   const sess=sessions[id];
-  const msgs=document.getElementById('messages');
-  msgs.innerHTML='';
-  if(!sess.history||sess.history.length===0){
-    msgs.innerHTML=`<div class="empty-state" id="empty-state">
+  const msgsEl=document.getElementById('messages');
+  msgsEl.innerHTML='';
+  if(!sess.history||!sess.history.length){
+    msgsEl.innerHTML=`<div class="empty-state" id="empty-state">
       <div class="empty-icon">✦</div><h3>Gemini Chat</h3>
-      <p id="empty-desc">${cfg.provider==='puter'?'Puter.js آماده — وب سرچ، عکس، تولید تصویر، همه رایگان!':'Actions رو اجرا کن'}</p>
+      <p id="empty-desc">${cfg.provider==='puter'?'Puter آماده‌ست!':'Actions رو اجرا کن'}</p>
       <div class="chips">
-        <span class="chip" onclick="useChip(this)">سلام! چی میتونی بکنی؟</span>
+        <span class="chip" onclick="useChip(this)">سلام!</span>
         <span class="chip" onclick="useChip(this)">آخرین خبرهای AI</span>
-        <span class="chip" onclick="useChip(this)">یه گربه بکش 🎨</span>
+        <span class="chip" onclick="useChip(this)">کد Python بنویس</span>
       </div></div>`;
   } else {
-    sess.history.forEach(m=>appendMsg(m.role,m.text,m.images,m.sources,m.genImages,false));
+    sess.history.forEach(m=>addMsg(m.role,m.text,m.imgs,m.srcs,m.genImgs,false));
   }
-  document.getElementById('session-title-bar').textContent=sess.title;
-  renderSessionList();
+  document.getElementById('title-bar').textContent=sess.title;
+  renderSessions();
 }
-function deleteSession(id,e){
+function delSess(id,e){
   e.stopPropagation();
   if(Object.keys(sessions).length<=1){alert('آخرین چت رو نمیشه پاک کرد');return;}
-  delete sessions[id];saveSessions();
-  if(activeId===id){const ids=Object.keys(sessions);if(ids.length)loadSession(ids[0]);else newSession();}
-  renderSessionList();
+  delete sessions[id];saveSess();
+  if(activeId===id){const ids=Object.keys(sessions);loadSess(ids[0]);}
+  renderSessions();
 }
-function renderSessionList(){
+function renderSessions(){
   const el=document.getElementById('session-list');
   const ids=Object.keys(sessions).sort((a,b)=>sessions[b].created-sessions[a].created);
-  if(!ids.length){el.innerHTML='<div class="no-sessions">هنوز چتی نداری</div>';return;}
+  if(!ids.length){el.innerHTML='<div class="no-sess">هنوز چتی نداری</div>';return;}
   el.innerHTML=ids.map(id=>{
     const s=sessions[id];
     const d=new Date(s.created);
-    const ds=`${d.getMonth()+1}/${d.getDate()}`;
-    return `<div class="session-item${id===activeId?' active':''}" onclick="loadSession('${id}')">
-      <div class="session-name">${esc(s.title)}</div>
-      <div class="session-meta"><span>${ds}</span><span class="session-provider">${s.provider==='puter'?'🟢':'⚙️'}</span></div>
-      <button class="session-del" onclick="deleteSession('${id}',event)">×</button>
+    return `<div class="si${id===activeId?' active':''}" onclick="loadSess('${id}')">
+      <div class="si-name">${esc(s.title)}</div>
+      <div class="si-meta">${d.getMonth()+1}/${d.getDate()} <span>${s.provider==='puter'?'🟢':'⚙️'}</span></div>
+      <button class="si-del" onclick="delSess('${id}',event)">×</button>
     </div>`;
   }).join('');
 }
-function saveSessions(){localStorage.setItem(SESS_KEY,JSON.stringify(sessions));}
-function updateTitle(id,title){
-  if(sessions[id]){sessions[id].title=title;saveSessions();
-    if(id===activeId)document.getElementById('session-title-bar').textContent=title;
-    renderSessionList();}
-}
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
+function saveSess(){localStorage.setItem(SK,JSON.stringify(sessions));}
+function setTitle(id,t){if(sessions[id]){sessions[id].title=t;saveSess();if(id===activeId)document.getElementById('title-bar').textContent=t;renderSessions();}}
+function toggleSb(){document.getElementById('sidebar').classList.toggle('collapsed');}
 
 // ── TOOLS ──
 function toggleSearch(){
-  useSearch=!useSearch;
-  document.getElementById('search-btn').classList.toggle('on',useSearch);
-  if(useSearch&&cfg.provider==='puter'){
-    // suggest GPT-5.2 for search
-    document.getElementById('model-select').value='openai/gpt-5.2-chat';
-  }
+  doSearch=!doSearch;
+  document.getElementById('btn-search').classList.toggle('on',doSearch);
+  if(doSearch&&cfg.provider==='puter') document.getElementById('model-sel').value='openai/gpt-5.2-chat';
 }
 function toggleImgGen(){
   if(cfg.provider!=='puter')return;
-  useImgGen=!useImgGen;
-  document.getElementById('imggen-btn').classList.toggle('on',useImgGen);
-  if(useImgGen){
-    document.getElementById('model-select').value='gemini-3.1-flash-image-preview';
-    document.getElementById('search-btn').classList.add('disabled');
-  } else {
-    document.getElementById('model-select').value='gemini-3-flash-preview';
-    document.getElementById('search-btn').classList.remove('disabled');
-  }
+  doImgGen=!doImgGen;
+  document.getElementById('btn-imggen').classList.toggle('on',doImgGen);
+  if(doImgGen) document.getElementById('model-sel').value='gemini-3.1-flash-image-preview';
+  else document.getElementById('model-sel').value='gemini-3-flash-preview';
 }
-function addImages(input){
-  Array.from(input.files).forEach(file=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
+function addImgs(input){
+  Array.from(input.files).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{
       const id=Math.random().toString(36).slice(2);
-      pendingImages.push({id,base64:e.target.result.split(',')[1],mime:file.type,preview:e.target.result,dataUrl:e.target.result});
-      renderPreviews();
-    };
-    reader.readAsDataURL(file);
-  });
-  input.value='';
+      pendImgs.push({id,b64:e.target.result.split(',')[1],mime:f.type,prev:e.target.result});
+      renderPrev();
+    };r.readAsDataURL(f);
+  });input.value='';
 }
-function renderPreviews(){
-  document.getElementById('img-preview').innerHTML=pendingImages.map(img=>`
-    <div class="prev-wrap"><img src="${img.preview}"/>
-    <button class="del" onclick="removeImg('${img.id}')">×</button></div>`).join('');
+function renderPrev(){
+  document.getElementById('img-preview').innerHTML=pendImgs.map(i=>`
+    <div class="pw"><img src="${i.prev}"/>
+    <button class="del" onclick="rmImg('${i.id}')">×</button></div>`).join('');
 }
-function removeImg(id){pendingImages=pendingImages.filter(x=>x.id!==id);renderPreviews();}
+function rmImg(id){pendImgs=pendImgs.filter(x=>x.id!==id);renderPrev();}
 
-// ── GITHUB (API MODE) ──
+// ── GITHUB ──
 const GH='https://api.github.com';
 function ghH(){return{'Authorization':`token ${cfg.token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};}
 async function ghGet(path){
@@ -442,162 +399,161 @@ async function ghGet(path){
   return{data:JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))))),sha:d.sha};
 }
 async function ghPut(path,content,sha){
-  const body={message:`chat:${path}`,content:btoa(unescape(encodeURIComponent(JSON.stringify(content))))};
+  const body={message:`c:${path}`,content:btoa(unescape(encodeURIComponent(JSON.stringify(content))))};
   if(sha)body.sha=sha;
   const r=await fetch(`${GH}/repos/${cfg.user}/${cfg.repo}/contents/${path}`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
   return r.ok;
 }
 
-// ── SEND ──
+// ── SEND MAIN ──
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+const sl=ms=>new Promise(r=>setTimeout(r,ms));
 
-async function sendMessage(){
-  if(isLoading)return;
+async function send(){
+  if(loading)return;
   const el=document.getElementById('prompt');
   const text=el.value.trim();
-  if(!text&&pendingImages.length===0)return;
+  const imgs=[...pendImgs];
+  if(!text&&!imgs.length)return;
   el.value='';el.style.height='auto';
-  isLoading=true;
-  document.getElementById('send-btn').disabled=true;
+  loading=true;document.getElementById('send-btn').disabled=true;
   const sess=sessions[activeId];
-  const imgs=[...pendingImages];
-  pendingImages=[];renderPreviews();
-  const model=document.getElementById('model-select').value;
-  const isFirst=sess.history.length===0;
+  pendImgs=[];renderPrev();
+  const model=document.getElementById('model-sel').value;
+  const isFirst=!sess.history.length;
 
-  appendMsg('user',text,imgs.map(i=>i.preview),null,null,true);
-  sess.history.push({role:'user',text,images:imgs.map(i=>i.preview)});
+  addMsg('user',text,imgs.map(i=>i.prev),null,null,true);
+  sess.history.push({role:'user',text,imgs:imgs.map(i=>i.prev)});
 
-  setSdot('busy');showTyping();setSbar('sending');
+  setSdot('busy');showTyping();setSbar('s');
 
   try{
-    let reply='',sources=[],genImages=[];
+    let reply='',srcs=[],genImgs=[];
     if(cfg.provider==='puter'){
-      ({reply,sources,genImages}=await sendViaPuter(sess,text,model,imgs));
+      const r=await puterSend(sess,text,model,imgs);
+      reply=r.reply;srcs=r.srcs;genImgs=r.genImgs;
+      // streaming already added bubble, don't add again
+      if(!r.streamed){
+        removeTyping();
+        addMsg('model',reply,null,srcs,genImgs,true);
+      }
     } else {
-      ({reply,sources}=await sendViaAPI(sess,imgs,text,model,isFirst));
+      const r=await apiSend(sess,imgs,text,model,isFirst);
+      reply=r.reply;srcs=r.srcs;
+      removeTyping();
+      addMsg('model',reply,null,srcs,[],true);
     }
-    removeTyping();
-    appendMsg('model',reply,null,sources,genImages,true);
-    sess.history.push({role:'model',text:reply,sources,genImages});
-    if(isFirst){
-      const short=text.slice(0,35)+(text.length>35?'…':'');
-      updateTitle(activeId,short);
-    }
-    saveSessions();setSdot('on');setSbar('done',model);
+    sess.history.push({role:'model',text:reply,srcs,genImgs});
+    if(isFirst) setTitle(activeId,text.slice(0,35)+(text.length>35?'…':''));
+    saveSess();setSdot('on');setSbar('done',model);
   }catch(e){
     removeTyping();
-    appendMsg('model','❌ خطا: '+e.message,null,null,null,true);
-    setSdot('on');setSbar('error');
+    addMsg('model','❌ خطا: '+e.message,null,null,null,true);
+    setSdot('on');setSbar('err');
   }
-  isLoading=false;
-  document.getElementById('send-btn').disabled=false;
-  el.focus();
+  loading=false;document.getElementById('send-btn').disabled=false;
+  document.getElementById('prompt').focus();
 }
 
 // ── PUTER SEND ──
-async function sendViaPuter(sess,text,model,imgs){
+async function puterSend(sess,text,model,imgs){
   // Image generation mode
-  if(useImgGen){
-    return await puterImageGen(text,model);
+  if(doImgGen){
+    return await puterImgGen(text,model);
   }
 
-  // Build messages history
-  const msgs=[];
-  for(const m of sess.history.slice(0,-1)){
-    msgs.push({role:m.role,content:m.text||''});
-  }
-
-  // Last user message with possible images
+  // Image analysis — no streaming, single call
   if(imgs.length>0){
-    // Use image analysis: pass first image as media param
-    // For multiple images, we concatenate
-    const imgUrl=imgs[0].dataUrl; // data URL works
-    const resp=await puter.ai.chat(text||'این عکس رو توصیف کن',imgUrl,{model,stream:false});
-    return {reply:String(resp),sources:[],genImages:[]};
+    removeTyping();
+    const resp=await puter.ai.chat(
+      text||'این عکس رو توصیف کن',
+      imgs[0].prev,  // data URL
+      {model:model.includes('image')?'gemini-3-flash-preview':model}
+    );
+    const reply=typeof resp==='string'?resp:(resp?.message?.content||String(resp));
+    addMsg('model',reply,null,[],[],true);
+    return{reply,srcs:[],genImgs:[],streamed:true};
   }
 
-  // Text chat with streaming
-  msgs.push({role:'user',content:text});
+  // Web search — no stream (tools + stream together unreliable)
+  if(doSearch){
+    removeTyping();
+    const msgs=buildPuterMsgs(sess,text);
+    const resp=await puter.ai.chat(msgs,{model,tools:[{type:'web_search'}]});
+    const reply=typeof resp==='string'?resp:(resp?.message?.content||String(resp));
+    addMsg('model',reply,null,[],[],true);
+    return{reply,srcs:[],genImgs:[],streamed:true};
+  }
 
-  const options={model,stream:true};
-  if(useSearch){options.tools=[{type:'web_search'}];}
-
-  const streamResp=await puter.ai.chat(msgs,options);
+  // Normal text — streaming
+  const msgs=buildPuterMsgs(sess,text);
+  const streamResp=await puter.ai.chat(msgs,{model,stream:true});
 
   // Create streaming bubble
   const empty=document.getElementById('empty-state');if(empty)empty.remove();
   const msgsEl=document.getElementById('messages');
-  const div=document.createElement('div');div.className='msg model';div.id='stream-msg';
+  const div=document.createElement('div');div.className='msg model';
   div.innerHTML='<div class="avatar">G</div><div class="bubble" id="stream-bub"></div>';
   msgsEl.appendChild(div);
   removeTyping();
 
   const bub=document.getElementById('stream-bub');
   let full='';
-
   for await(const part of streamResp){
-    if(part?.text){
-      full+=part.text;
-      bub.innerHTML=fmt(full);
-      msgsEl.scrollTop=msgsEl.scrollHeight;
-      setSbar('streaming');
-    }
+    if(part?.text){full+=part.text;bub.innerHTML=fmt(full);msgsEl.scrollTop=msgsEl.scrollHeight;setSbar('rx');}
   }
-  div.removeAttribute('id');
-  return{reply:full,sources:[],genImages:[]};
+  bub.removeAttribute('id');
+  return{reply:full,srcs:[],genImgs:[],streamed:true};
 }
 
-async function puterImageGen(prompt,model){
-  // Show "generating" bubble
+function buildPuterMsgs(sess,text){
+  const msgs=[];
+  for(const m of sess.history.slice(0,-1)){msgs.push({role:m.role,content:m.text||''});}
+  msgs.push({role:'user',content:text});
+  return msgs;
+}
+
+async function puterImgGen(text,model){
   const empty=document.getElementById('empty-state');if(empty)empty.remove();
   const msgsEl=document.getElementById('messages');
-  const div=document.createElement('div');div.className='msg model';div.id='stream-msg';
-  div.innerHTML='<div class="avatar">G</div><div class="typing-bubble"><div class="wave"><span class="wdot"></span><span class="wdot"></span><span class="wdot"></span></div><span class="tl">در حال تولید تصویر... ✨</span></div>';
-  msgsEl.appendChild(div);
-  removeTyping();
-  msgsEl.scrollTop=msgsEl.scrollHeight;
+  const div=document.createElement('div');div.className='msg model';div.id='tmpImgMsg';
+  div.innerHTML='<div class="avatar">G</div><div class="tbubble"><div class="wave"><span class="wdot"></span><span class="wdot"></span><span class="wdot"></span></div><span class="tl">در حال تولید تصویر ✨</span></div>';
+  msgsEl.appendChild(div);removeTyping();msgsEl.scrollTop=msgsEl.scrollHeight;
 
-  const resp=await puter.ai.chat(prompt,{
-    model,
-    stream:true,
-    image_config:{aspect_ratio:'1:1',image_size:'1K'}
-  });
-
-  const genImages=[];
-  let replyText='';
+  const resp=await puter.ai.chat(text,{model,stream:true,image_config:{aspect_ratio:'1:1',image_size:'1K'}});
+  const genImgs=[];let replyText='';
   for await(const part of resp){
     if(part?.text)replyText+=part.text;
-    if(part?.image){genImages.push(part.image.image_url.url);}
+    if(part?.image)genImgs.push(part.image.image_url.url);
   }
-
-  div.remove();
-  return{reply:replyText||'تصویر تولید شد ✨',sources:[],genImages};
+  document.getElementById('tmpImgMsg')?.remove();
+  addMsg('model',replyText||'✨',null,[],genImgs,true);
+  return{reply:replyText||'✨',srcs:[],genImgs,streamed:true};
 }
 
-// ── API MODE (GitHub Actions) ──
-async function sendViaAPI(sess,imgs,text,model,isFirst){
+// ── API SEND ──
+async function apiSend(sess,imgs,text,model,isFirst){
   const parts=[];
-  imgs.forEach(img=>parts.push({inline_data:{mime_type:img.mime,data:img.base64}}));
+  imgs.forEach(i=>parts.push({inline_data:{mime_type:i.mime,data:i.b64}}));
   if(text)parts.push({text});
-  const apiHistory=sess.history.map((m,i)=>{
+  const history=sess.history.map((m,i)=>{
     if(m.role==='user'&&i===sess.history.length-1)return{role:'user',parts};
     return{role:m.role,parts:[{text:m.text||''}]};
   });
   const id=uid();
   const ex=await ghGet('queue/prompt.json');
-  const ok=await ghPut('queue/prompt.json',{id,model,use_search:useSearch,need_title:isFirst,contents:apiHistory},ex?.sha);
-  if(!ok)throw new Error('نوشتن prompt ناموفق');
-  setSbar('waiting');
-  return await pollResponse(id);
+  const ok=await ghPut('queue/prompt.json',{id,model,use_search:doSearch,need_title:isFirst,contents:history},ex?.sha);
+  if(!ok)throw new Error('ارسال ناموفق — token یا repo رو چک کن');
+  setSbar('w');
+  return await pollResp(id);
 }
-async function pollResponse(id){
+
+async function pollResp(id){
   const path=`queue/response_${id}.json`;
   const deadline=Date.now()+180000;
   let i=0;
   while(Date.now()<deadline){
-    await sleep(3500);setSbar('polling',null,i++);
+    await sl(3500);setSbar('p',null,i++);
     try{
       const res=await ghGet(path);
       if(res&&res.data){
@@ -605,45 +561,42 @@ async function pollResponse(id){
         const t=cand?.content?.parts?.[0]?.text;
         if(t){
           const chunks=cand?.grounding_metadata?.grounding_chunks||[];
-          const sources=chunks.map(c=>({title:c.web?.title||'',uri:c.web?.uri||''})).filter(s=>s.uri);
-          return{reply:t,sources,genImages:[]};
+          const srcs=chunks.map(c=>({title:c.web?.title||'',uri:c.web?.uri||''})).filter(s=>s.uri);
+          return{reply:t,srcs};
         }
         if(res.data?.error)throw new Error(res.data.error.message);
       }
     }catch(e){if(e.message)throw e;}
   }
-  throw new Error('timeout — Actions اجراست؟');
+  throw new Error('timeout — آیا Actions workflow اجراست؟');
 }
 
 // ── UI ──
-function appendMsg(role,text,imagePreviews,sources,genImages,scroll){
+function addMsg(role,text,imgPrevs,srcs,genImgs,scroll){
   const empty=document.getElementById('empty-state');if(empty)empty.remove();
   const msgsEl=document.getElementById('messages');
   const div=document.createElement('div');div.className=`msg ${role}`;
   const av=document.createElement('div');av.className='avatar';av.textContent=role==='user'?'ش':'G';
   const bub=document.createElement('div');bub.className='bubble';
 
-  // User images
-  if(imagePreviews&&imagePreviews.length){
-    imagePreviews.forEach(src=>{const img=document.createElement('img');img.src=src;bub.appendChild(img);});
+  if(imgPrevs&&imgPrevs.length){
+    imgPrevs.forEach(src=>{const img=document.createElement('img');img.src=src;bub.appendChild(img);});
     if(text){const p=document.createElement('div');p.style.marginTop='8px';p.textContent=text;bub.appendChild(p);}
   } else if(text){bub.innerHTML=fmt(text);}
 
-  // Generated images
-  if(genImages&&genImages.length){
-    genImages.forEach(src=>{
+  if(genImgs&&genImgs.length){
+    genImgs.forEach(src=>{
       const img=document.createElement('img');img.src=src;
-      img.style.cssText='max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--border);cursor:pointer;';
-      img.onclick=()=>window.open(src);
+      img.style.cssText='max-width:100%;border-radius:12px;margin-top:10px;cursor:pointer;';
+      img.onclick=()=>{const a=document.createElement('a');a.href=src;a.download='generated.png';a.click();};
       bub.appendChild(img);
     });
   }
 
-  // Sources
-  if(sources&&sources.length){
-    const s=document.createElement('div');s.className='sources';
-    sources.slice(0,5).forEach((x,i)=>{
-      const a=document.createElement('a');a.className='src-chip';a.href=x.uri;a.target='_blank';
+  if(srcs&&srcs.length){
+    const s=document.createElement('div');s.className='srcs';
+    srcs.slice(0,5).forEach((x,i)=>{
+      const a=document.createElement('a');a.className='sc';a.href=x.uri;a.target='_blank';
       a.textContent=`[${i+1}] ${x.title||(x.uri.split('/')[2]||'منبع')}`;s.appendChild(a);
     });bub.appendChild(s);
   }
@@ -653,6 +606,7 @@ function appendMsg(role,text,imagePreviews,sources,genImages,scroll){
 }
 
 function fmt(t){
+  if(!t)return '';
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/```(\w*)\n([\s\S]*?)```/g,(_,l,c)=>`<pre><code>${c.trim()}</code></pre>`)
     .replace(/`([^`]+)`/g,'<code>$1</code>')
@@ -661,45 +615,31 @@ function fmt(t){
     .replace(/^### (.+)$/gm,'<strong style="display:block;margin:6px 0">$1</strong>')
     .replace(/^## (.+)$/gm,'<strong style="font-size:15px;display:block;margin:8px 0">$1</strong>');
 }
-function esc(t){return t.replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function esc(t){return(t||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function showTyping(){
   const msgsEl=document.getElementById('messages');
   const div=document.createElement('div');div.className='msg model';div.id='typing';
   div.innerHTML=`<div class="avatar">G</div>
-    <div class="typing-bubble"><div class="wave">
+    <div class="tbubble"><div class="wave">
       <span class="wdot"></span><span class="wdot"></span><span class="wdot"></span>
-    </div><span class="tl" id="typing-label">در حال پردازش...</span></div>`;
+    </div><span class="tl" id="tl">در حال پردازش...</span></div>`;
   msgsEl.appendChild(div);msgsEl.scrollTop=msgsEl.scrollHeight;
 }
 function removeTyping(){const el=document.getElementById('typing');if(el)el.remove();}
 function setSdot(s){const d=document.getElementById('sdot');d.className='sdot';if(s)d.classList.add(s);}
-function setSbar(state,model,i){
+function setSbar(st,model,i){
   const el=document.getElementById('sbar');
-  const tl=document.getElementById('typing-label');
-  const bar='<div class="sbar-progress"><div class="sbar-inner"></div></div>';
-  const states={
-    sending:['ارسال...','ارسال...'],waiting:['منتظر Actions...','منتظر...'],
-    streaming:['دریافت پاسخ...','دریافت...'],
-    polling:[['پردازش.','پردازش..','پردازش...'][(i||0)%3],null],
-    done:[`✓ ${model||''}`,null],error:['خطا',null]
-  };
-  const [txt,tlTxt]=states[state]||['آماده',null];
-  el.innerHTML=`<span>${txt}</span>${['sending','waiting','streaming','polling'].includes(state)?bar:''}`;
-  if(tl&&tlTxt)tl.textContent=tlTxt;
-  else if(tl)tl.textContent=txt;
+  const tl=document.getElementById('tl');
+  const bar='<div class="sprg"><div class="sprgI"></div></div>';
+  const map={s:['ارسال...',1],w:['منتظر Actions...',1],p:[['پردازش.','پردازش..','پردازش...'][(i||0)%3],1],rx:['دریافت...',1],done:[`✓ ${model||''}`,0],err:['خطا',0]};
+  const [txt,showBar]=map[st]||['آماده',0];
+  el.innerHTML=`<span>${txt}</span>${showBar?bar:''}`;
+  if(tl)tl.textContent=txt;
 }
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
-function useChip(el){
-  const t=el.textContent;
-  if(t.includes('بکش')||t.includes('عکس')){
-    // auto enable image gen for drawing chips
-    if(cfg.provider==='puter'&&!useImgGen)toggleImgGen();
-  }
-  document.getElementById('prompt').value=t;
-  sendMessage();
-}
+function useChip(el){document.getElementById('prompt').value=el.textContent;send();}
 init();
 </script>
 </body>
