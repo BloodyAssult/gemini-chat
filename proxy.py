@@ -1,8 +1,10 @@
 import requests, json, time, os, base64, traceback, urllib.parse, re
 
-API_KEY = os.environ['GEMINI_API_KEY']
-GH_TOKEN = os.environ['GH_TOKEN']
-REPO = os.environ['REPO']
+API_KEY    = os.environ.get('GEMINI_API_KEY', '')
+GH_TOKEN   = os.environ['GH_TOKEN']
+REPO       = os.environ['REPO']
+PUTER_TOKEN= os.environ.get("PUTER_TOKEN", "")   # fallback env
+
 GH_HEADERS = {
     'Authorization': f'token {GH_TOKEN}',
     'Content-Type': 'application/json',
@@ -10,184 +12,227 @@ GH_HEADERS = {
 }
 BASE = 'https://api.github.com'
 
+# ── GitHub file helpers ──────────────────────────────────────────────────────
 def get_file(path):
-    r = requests.get(f'{BASE}/repos/{REPO}/contents/{path}?_={time.time()}', headers=GH_HEADERS)
+    r = requests.get(f'{BASE}/repos/{REPO}/contents/{path}?_={time.time()}',
+                     headers=GH_HEADERS)
     if r.status_code == 200:
-        data = r.json()
-        content = base64.b64decode(data['content']).decode('utf-8')
-        return json.loads(content), data['sha']
+        d = r.json()
+        return json.loads(base64.b64decode(d['content']).decode()), d['sha']
     return None, None
 
 def put_file(path, content, sha=None):
-    encoded = base64.b64encode(json.dumps(content, ensure_ascii=False).encode('utf-8')).decode()
-    body = {'message': f'proxy: {path}', 'content': encoded}
-    if sha:
-        body['sha'] = sha
-    r = requests.put(f'{BASE}/repos/{REPO}/contents/{path}', headers=GH_HEADERS, json=body)
+    enc = base64.b64encode(
+        json.dumps(content, ensure_ascii=False).encode()).decode()
+    body = {'message': f'proxy:{path}', 'content': enc}
+    if sha: body['sha'] = sha
+    r = requests.put(f'{BASE}/repos/{REPO}/contents/{path}',
+                     headers=GH_HEADERS, json=body)
     return r.status_code in [200, 201]
 
+# ── Puter API ────────────────────────────────────────────────────────────────
+PUTER_DRIVER_MAP = {
+    # Gemini models
+    'gemini-3-flash-preview':        ('google-ai',           'gemini-3-flash-preview'),
+    'gemini-3.1-pro-preview':        ('google-ai',           'gemini-3.1-pro-preview'),
+    'gemini-3.1-flash-lite-preview': ('google-ai',           'gemini-3.1-flash-lite-preview'),
+    'gemini-2.5-flash':              ('google-ai',           'gemini-2.5-flash'),
+    'gemini-2.5-pro':                ('google-ai',           'gemini-2.5-pro'),
+    # GPT
+    'openai/gpt-5.2-chat':           ('openai-completion',   'gpt-4o'),
+    'gpt-4o':                        ('openai-completion',   'gpt-4o'),
+    'gpt-4o-mini':                   ('openai-completion',   'gpt-4o-mini'),
+    # Claude
+    'claude-sonnet-4-6':             ('claude',              'claude-sonnet-4-6'),
+    'claude-opus-4-6':               ('claude',              'claude-opus-4-6'),
+}
+
+def call_puter(model, contents):
+    """Call Puter AI API — free for all models, needs user token."""
+    driver, puter_model = PUTER_DRIVER_MAP.get(model, ('google-ai', model))
+
+    # Convert contents (Gemini format) → OpenAI messages format
+    messages = []
+    for c in contents:
+        role = c.get('role', 'user')
+        if role == 'model': role = 'assistant'
+        parts = c.get('parts', [])
+        msg_content = []
+        for p in parts:
+            if 'text' in p:
+                msg_content.append({'type': 'text', 'text': p['text']})
+            elif 'inline_data' in p:
+                mime = p['inline_data']['mime_type']
+                data = p['inline_data']['data']
+                msg_content.append({'type': 'image_url',
+                    'image_url': {'url': f'data:{mime};base64,{data}'}})
+        messages.append({'role': role,
+            'content': msg_content if len(msg_content) > 1 else msg_content[0]['text'] if msg_content else ''})
+
+    payload = {
+        'interface': 'puter-chat-completion',
+        'driver':    driver,
+        'test_mode': False,
+        'method':    'complete',
+        'args': {
+            'model':    puter_model,
+            'messages': messages,
+            'stream':   False,
+        }
+    }
+
+    r = requests.post(
+        'https://api.puter.com/drivers/call',
+        headers={
+            'Authorization': f'Bearer {PUTER_TOKEN}',
+            'Content-Type':  'application/json',
+        },
+        json=payload,
+        timeout=90
+    )
+    data = r.json()
+
+    # Normalise to our expected format
+    if r.ok and data.get('success'):
+        result = data.get('result', {})
+        # OpenAI-style response
+        text = (result.get('message', {}).get('content') or
+                result.get('choices', [{}])[0].get('message', {}).get('content', ''))
+        return {'candidates': [{'content': {'parts': [{'text': text}]}}]}
+    else:
+        err = data.get('error', {}).get('message', str(data))
+        return {'error': {'code': r.status_code, 'message': err}}
+
+# ── Gemini API ───────────────────────────────────────────────────────────────
+def call_gemini(model, contents):
+    body = {'contents': contents}
+    r = requests.post(
+        f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
+        json=body, timeout=90)
+    return r.json()
+
+# ── DuckDuckGo Search ────────────────────────────────────────────────────────
 def clean_html(html):
-    html = re.sub(r'<script[^>]*>[\s\S]*?</script>', '', html, flags=re.IGNORECASE)
-    html = re.sub(r'<style[^>]*>[\s\S]*?</style>', '', html, flags=re.IGNORECASE)
+    html = re.sub(r'<script[^>]*>[\s\S]*?</script>', '', html, flags=re.I)
+    html = re.sub(r'<style[^>]*>[\s\S]*?</style>',   '', html, flags=re.I)
     html = re.sub(r'<[^>]+>', ' ', html)
-    html = re.sub(r'&nbsp;', ' ', html)
-    html = re.sub(r'&amp;', '&', html)
-    html = re.sub(r'&lt;', '<', html)
-    html = re.sub(r'&gt;', '>', html)
-    html = re.sub(r'\s+', ' ', html).strip()
-    return html[:4000]  # limit per page
+    html = re.sub(r'&\w+;', ' ', html)
+    return re.sub(r'\s+', ' ', html).strip()[:4000]
 
 def fetch_url(url):
     try:
-        r = requests.get(url, timeout=8, headers={
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
-        }, allow_redirects=True)
-        if 'text/html' in r.headers.get('Content-Type', ''):
+        r = requests.get(url, timeout=8,
+            headers={'User-Agent': 'Mozilla/5.0'}, allow_redirects=True)
+        if 'text' in r.headers.get('Content-Type', ''):
             return clean_html(r.text)
-        elif 'text/' in r.headers.get('Content-Type', ''):
-            return r.text[:4000]
-        return None
-    except Exception as e:
-        print(f'  fetch error {url}: {e}')
-        return None
+    except: pass
+    return None
 
-def duckduckgo_search(query, max_results=5):
+def ddg_search(query, n=5):
     results = []
     try:
-        # Instant Answer API
-        url = f'https://api.duckduckgo.com/?q={urllib.parse.quote(query)}&format=json&no_html=1&skip_disambig=1'
-        r = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
-        data = r.json()
-        if data.get('AbstractText'):
-            results.append({'title': data.get('Heading',''), 'snippet': data['AbstractText'], 'url': data.get('AbstractURL','')})
-        for topic in data.get('RelatedTopics', [])[:3]:
-            if isinstance(topic, dict) and topic.get('Text'):
-                results.append({'title': topic.get('Text','')[:60], 'snippet': topic.get('Text',''), 'url': topic.get('FirstURL','')})
-    except Exception as e:
-        print(f'DDG instant error: {e}')
+        r = requests.get(
+            f'https://api.duckduckgo.com/?q={urllib.parse.quote(query)}&format=json&no_html=1',
+            timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
+        d = r.json()
+        if d.get('AbstractText'):
+            results.append({'title': d.get('Heading',''), 'snippet': d['AbstractText'],
+                            'url': d.get('AbstractURL','')})
+        for t in d.get('RelatedTopics', [])[:3]:
+            if isinstance(t, dict) and t.get('Text'):
+                results.append({'title': t['Text'][:60], 'snippet': t['Text'],
+                                'url': t.get('FirstURL','')})
+    except: pass
 
-    # HTML fallback
     if len(results) < 2:
         try:
-            r = requests.post('https://html.duckduckgo.com/html/', data={'q': query}, timeout=10,
-                             headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'})
-            snippets = re.findall(r'class="result__snippet"[^>]*>(.*?)</a>', r.text, re.DOTALL)
-            titles   = re.findall(r'class="result__a"[^>]*>(.*?)</a>', r.text, re.DOTALL)
-            hrefs    = re.findall(r'class="result__a" href="([^"]+)"', r.text)
-            for i in range(min(max_results, len(snippets))):
-                snippet = re.sub(r'<[^>]+>','',snippets[i]).strip()
-                title   = re.sub(r'<[^>]+>','',titles[i]).strip() if i<len(titles) else ''
-                url     = hrefs[i] if i<len(hrefs) else ''
-                if snippet:
-                    results.append({'title':title,'snippet':snippet,'url':url})
-        except Exception as e:
-            print(f'DDG html error: {e}')
+            r = requests.post('https://html.duckduckgo.com/html/', data={'q': query},
+                timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
+            snips  = re.findall(r'class="result__snippet"[^>]*>(.*?)</a>', r.text, re.S)
+            titles = re.findall(r'class="result__a"[^>]*>(.*?)</a>',       r.text, re.S)
+            hrefs  = re.findall(r'class="result__a" href="([^"]+)"',        r.text)
+            for i in range(min(n, len(snips))):
+                results.append({
+                    'title':   re.sub(r'<[^>]+>','',titles[i]).strip() if i<len(titles) else '',
+                    'snippet': re.sub(r'<[^>]+>','',snips[i]).strip(),
+                    'url':     hrefs[i] if i<len(hrefs) else ''})
+        except: pass
 
-    return results[:max_results]
+    return results[:n]
 
-def build_search_context(query, results, fetch_content=True):
+def build_search_ctx(query, results):
     if not results:
         return f"[جستجو برای '{query}' نتیجه‌ای نداشت]"
     ctx = f"[نتایج جستجوی وب برای: '{query}']\n\n"
     for i, r in enumerate(results, 1):
-        ctx += f"--- منبع {i}: {r['title']} ---\n"
-        ctx += f"URL: {r['url']}\n"
-        ctx += f"خلاصه: {r['snippet']}\n"
-        if fetch_content and r['url'] and r['url'].startswith('http'):
-            print(f"  fetching: {r['url']}")
+        ctx += f"--- منبع {i}: {r['title']} ---\nURL: {r['url']}\n{r['snippet']}\n"
+        if r['url'].startswith('http'):
             content = fetch_url(r['url'])
-            if content:
-                ctx += f"محتوای صفحه:\n{content}\n"
+            if content: ctx += f"محتوا:\n{content}\n"
         ctx += "\n"
-    ctx += "[پایان نتایج — بر اساس این اطلاعات پاسخ بده و منابع را ذکر کن]"
-    return ctx
+    return ctx + "[پایان نتایج — بر اساس این اطلاعات جواب بده]"
 
-def call_gemini(model, contents, use_search=False):
+# ── Main dispatch ────────────────────────────────────────────────────────────
+def dispatch(model, contents, use_search, use_puter):
+    # Inject search context if needed
     if use_search:
         try:
-            last_user_text = None
-            for c in reversed(contents):
-                if c['role'] == 'user':
-                    for p in c['parts']:
-                        if p.get('text'):
-                            last_user_text = p['text']
-                            break
-                    if last_user_text:
-                        break
-            if last_user_text:
-                print(f'Searching for: {last_user_text}')
-                results = duckduckgo_search(last_user_text)
-                print(f'Got {len(results)} results, fetching content...')
-                ctx = build_search_context(last_user_text, results, fetch_content=True)
+            last_text = next((p['text'] for c in reversed(contents)
+                if c['role']=='user' for p in c['parts'] if 'text' in p), None)
+            if last_text:
+                print(f'  DDG search: {last_text[:60]}')
+                results = ddg_search(last_text)
+                ctx = build_search_ctx(last_text, results)
                 enhanced = list(contents)
-                last = enhanced[-1]
-                new_parts = []
-                for p in last['parts']:
-                    if p.get('text'):
-                        new_parts.append({'text': ctx + '\n\nسوال کاربر: ' + p['text']})
-                    else:
-                        new_parts.append(p)
-                enhanced[-1] = {'role': 'user', 'parts': new_parts}
+                lp = enhanced[-1]['parts']
+                enhanced[-1] = {'role':'user', 'parts':
+                    [{'text': ctx+'\n\nسوال: '+p['text']} if 'text' in p else p for p in lp]}
                 contents = enhanced
         except Exception as e:
-            print(f'Search error: {e}')
-            traceback.print_exc()
+            print(f'  search error: {e}')
 
-    body = {'contents': contents}
-    r = requests.post(
-        f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
-        json=body, timeout=120
-    )
-    return r.json()
+    if use_puter and PUTER_TOKEN:
+        print(f'  → Puter API ({model})')
+        return call_puter(model, contents)
+    else:
+        print(f'  → Gemini API ({model})')
+        return call_gemini(model, contents)
 
-def generate_title(model, first_message):
-    try:
-        body = {'contents': [{'role':'user','parts':[{'text':
-            f'در ۴ کلمه یا کمتر یک عنوان کوتاه فارسی برای این چت بساز. فقط عنوان بنویس بدون توضیح:\n{first_message}'
-        }]}]}
-        r = requests.post(
-            f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
-            json=body, timeout=15
-        )
-        data = r.json()
-        return data['candidates'][0]['content']['parts'][0]['text'].strip()[:40]
-    except:
-        return first_message[:30] + '...'
-
-print('Gemini Proxy started — DDG search + URL fetch + titles')
+# ── Loop ─────────────────────────────────────────────────────────────────────
+print('✅ Proxy started (Gemini + Puter + DDG search)')
 last_id = None
 
 while True:
     try:
         data, sha = get_file('queue/prompt.json')
         if data and data.get('id') and data.get('id') != last_id:
-            req_id = data['id']
-            last_id = req_id
-            model = data.get('model', 'gemini-3-flash-preview')
+            req_id     = data['id']
+            last_id    = req_id
+            model      = data.get('model', 'gemini-3-flash-preview')
             use_search = data.get('use_search', False)
-            need_title = data.get('need_title', False)
-            print(f'[{req_id}] model={model} search={use_search} title={need_title}')
+            use_puter  = data.get('use_puter', False)
+            print(f'[{req_id}] model={model} search={use_search} puter={use_puter}')
 
-            result = call_gemini(model, data['contents'], use_search)
-
-            # Generate title for new sessions
-            if need_title:
-                try:
-                    first_msg = data['contents'][0]['parts'][0].get('text','')
-                    if first_msg:
-                        title = generate_title(model, first_msg)
-                        result['_session_title'] = title
-                        print(f'Title: {title}')
-                except:
-                    pass
+            # Per-request puter token overrides env
+req_puter_token = data.get('puter_token', '')
+if req_puter_token:
+    import builtins
+    _orig = PUTER_TOKEN
+    # monkey-patch for this call
+    import sys
+    _mod = sys.modules[__name__]
+    _mod.PUTER_TOKEN = req_puter_token
+    result = dispatch(model, data['contents'], use_search, use_puter)
+    _mod.PUTER_TOKEN = _orig
+else:
+    result = dispatch(model, data['contents'], use_search, use_puter)
 
             resp_path = f'queue/response_{req_id}.json'
-            _, existing_sha = get_file(resp_path)
-            ok = put_file(resp_path, result, existing_sha)
-            print(f'Done [{req_id}] ok={ok}')
-
+            _, old_sha = get_file(resp_path)
+            ok = put_file(resp_path, result, old_sha)
+            print(f'  written: {ok}')
     except Exception as e:
         print(f'Error: {e}')
         traceback.print_exc()
-
     time.sleep(3)
+# Note: proxy also accepts puter_token per-request (from payload)
