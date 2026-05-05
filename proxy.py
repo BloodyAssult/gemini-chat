@@ -33,35 +33,91 @@ def put_file(path, content, sha=None):
         headers=GH_HEADERS, json=body, timeout=15)
     return r.status_code in [200, 201]
 
-# ── Gemini API ─────────────────────────────────────────────────────────────
-def call_gemini(model, contents):
-    r = requests.post(
-        f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
-        json={'contents': contents}, timeout=90)
-    return r.json()
-
-# ── Puter API ──────────────────────────────────────────────────────────────
-# Model → (driver, puter_model_name)
-PUTER_MAP = {
-    # Gemini via Puter
-    'gemini-3-flash-preview':        ('google-ai', 'gemini-3-flash-preview'),
-    'gemini-3.1-pro-preview':        ('google-ai', 'gemini-3.1-pro-preview'),
-    'gemini-3.1-flash-lite-preview': ('google-ai', 'gemini-3.1-flash-lite-preview'),
-    'gemini-2.5-flash':              ('google-ai', 'gemini-2.5-flash'),
-    'gemini-2.5-pro':                ('google-ai', 'gemini-2.5-pro'),
-    # OpenAI via Puter
-    'openai/gpt-5.2-chat':           ('openai-completion', 'gpt-4o'),
-    'gpt-4o':                        ('openai-completion', 'gpt-4o'),
-    'gpt-4o-mini':                   ('openai-completion', 'gpt-4o-mini'),
-    # Claude via Puter
-    'claude-sonnet-4-6':             ('claude', 'claude-sonnet-4-6'),
-    'claude-opus-4-6':               ('claude', 'claude-opus-4-6'),
-    # Image generation
-    'gemini-3.1-flash-image-preview': ('google-ai', 'gemini-3.1-flash-image-preview'),
+# ── Model name mapping for Puter ───────────────────────────────────────────
+# Puter uses provider-prefixed model names like OpenRouter
+PUTER_MODEL_MAP = {
+    # Gemini models → google/ prefix
+    'gemini-3-flash-preview':         'google/gemini-3-flash-preview',
+    'gemini-3.1-pro-preview':         'google/gemini-3.1-pro-preview',
+    'gemini-3.1-flash-lite-preview':  'google/gemini-3.1-flash-lite-preview',
+    'gemini-2.5-flash':               'google/gemini-2.5-flash',
+    'gemini-2.5-pro':                 'google/gemini-2.5-pro',
+    'gemini-3.1-flash-image-preview': 'google/gemini-3.1-flash-image-preview',
+    # OpenAI → already has openai/ prefix or use as-is
+    'openai/gpt-5.2-chat':            'openai/gpt-5.2-chat',
+    'gpt-4o':                         'openai/gpt-4o',
+    'gpt-4o-mini':                    'openai/gpt-4o-mini',
+    # Claude → claude/ prefix or as-is
+    'claude-sonnet-4-6':              'claude-sonnet-4-6',
+    'claude-opus-4-6':                'claude-opus-4-6',
 }
 
+def get_puter_model(model):
+    return PUTER_MODEL_MAP.get(model, model)
+
+# ── Puter API — OpenAI-compatible endpoint ─────────────────────────────────
+def call_puter(model, contents, token):
+    puter_model = get_puter_model(model)
+    messages = contents_to_messages(contents)
+
+    print(f'  Puter: model={puter_model} msgs={len(messages)}')
+
+    # Try OpenAI-compatible endpoint first
+    payload = {
+        'model':    puter_model,
+        'messages': messages,
+        'stream':   False,
+    }
+
+    r = requests.post(
+        'https://api.puter.com/v1/chat/completions',
+        headers={
+            'Authorization': f'Bearer {token}',
+            'Content-Type':  'application/json',
+        },
+        json=payload,
+        timeout=90
+    )
+
+    print(f'  Puter v1 status={r.status_code}')
+
+    if r.status_code == 200:
+        try:
+            data = r.json()
+            text = data['choices'][0]['message']['content']
+            if text:
+                return {'candidates': [{'content': {'parts': [{'text': text}]}}]}
+        except Exception as e:
+            print(f'  Puter v1 parse error: {e} body={r.text[:300]}')
+
+    # Fallback: try /puterai/chat/completions
+    print(f'  Trying /puterai/chat/completions ...')
+    r2 = requests.post(
+        'https://api.puter.com/puterai/chat/completions',
+        headers={
+            'Authorization': f'Bearer {token}',
+            'Content-Type':  'application/json',
+        },
+        json=payload,
+        timeout=90
+    )
+    print(f'  Puter puterai status={r2.status_code}')
+
+    if r2.status_code == 200:
+        try:
+            data2 = r2.json()
+            text2 = data2['choices'][0]['message']['content']
+            if text2:
+                return {'candidates': [{'content': {'parts': [{'text': text2}]}}]}
+        except Exception as e:
+            print(f'  Puter puterai parse error: {e}')
+
+    # Both failed — return error with details
+    err_body = r.text[:400] if r.status_code != 200 else r2.text[:400]
+    return {'error': {'code': r.status_code,
+                      'message': f'Puter API failed (status={r.status_code}): {err_body}'}}
+
 def contents_to_messages(contents):
-    """Convert Gemini-format contents → OpenAI messages format"""
     messages = []
     for c in contents:
         role = 'assistant' if c.get('role') == 'model' else c.get('role', 'user')
@@ -77,82 +133,21 @@ def contents_to_messages(contents):
                     'type': 'image_url',
                     'image_url': {'url': f'data:{mime};base64,{data}'}
                 })
-        # Simplify if only one text part
         if len(content_parts) == 1 and content_parts[0]['type'] == 'text':
-            final_content = content_parts[0]['text']
+            final = content_parts[0]['text']
+        elif content_parts:
+            final = content_parts
         else:
-            final_content = content_parts
-        messages.append({'role': role, 'content': final_content})
+            final = ''
+        messages.append({'role': role, 'content': final})
     return messages
 
-def call_puter(model, contents, token):
-    driver, puter_model = PUTER_MAP.get(model, ('google-ai', model))
-    messages = contents_to_messages(contents)
-
-    payload = {
-        'interface': 'puter-chat-completion',
-        'driver':    driver,
-        'test_mode': False,
-        'method':    'complete',
-        'args': {
-            'model':    puter_model,
-            'messages': messages,
-            'stream':   False,
-        }
-    }
-
-    print(f'  Puter payload driver={driver} model={puter_model} msgs={len(messages)}')
-
+# ── Gemini API ─────────────────────────────────────────────────────────────
+def call_gemini(model, contents):
     r = requests.post(
-        'https://api.puter.com/drivers/call',
-        headers={
-            'Authorization': f'Bearer {token}',
-            'Content-Type':  'application/json',
-        },
-        json=payload,
-        timeout=90
-    )
-
-    print(f'  Puter response status={r.status_code}')
-    try:
-        data = r.json()
-    except Exception:
-        return {'error': {'code': r.status_code, 'message': f'Puter non-JSON: {r.text[:200]}'}}
-
-    print(f'  Puter response keys={list(data.keys())}')
-
-    if data.get('success') and data.get('result'):
-        result = data['result']
-        # Try different response formats
-        text = None
-        if isinstance(result, dict):
-            # OpenAI format
-            msg = result.get('message') or {}
-            text = msg.get('content') if isinstance(msg, dict) else None
-            if not text:
-                choices = result.get('choices') or []
-                if choices:
-                    text = choices[0].get('message', {}).get('content', '')
-            # Direct text
-            if not text:
-                text = result.get('text') or result.get('content') or str(result)
-        elif isinstance(result, str):
-            text = result
-
-        if text:
-            return {'candidates': [{'content': {'parts': [{'text': text}]}}]}
-        else:
-            return {'error': {'code': 200, 'message': f'Puter empty response: {str(result)[:200]}'}}
-
-    elif not data.get('success'):
-        err_obj = data.get('error', {})
-        if isinstance(err_obj, dict):
-            err_msg = err_obj.get('message', str(err_obj))
-        else:
-            err_msg = str(err_obj)
-        return {'error': {'code': r.status_code, 'message': f'Puter error: {err_msg}'}}
-    else:
-        return {'error': {'code': r.status_code, 'message': f'Puter unknown: {str(data)[:200]}'}}
+        f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}',
+        json={'contents': contents}, timeout=90)
+    return r.json()
 
 # ── DuckDuckGo search ──────────────────────────────────────────────────────
 def clean_html(html):
@@ -166,11 +161,10 @@ def fetch_url(url):
     try:
         r = requests.get(url, timeout=8,
             headers={'User-Agent': 'Mozilla/5.0'}, allow_redirects=True)
-        ct = r.headers.get('Content-Type', '')
-        if 'text' in ct:
+        if 'text' in r.headers.get('Content-Type', ''):
             return clean_html(r.text)
     except Exception as e:
-        print(f'  fetch_url error {url}: {e}')
+        print(f'  fetch_url error: {e}')
     return None
 
 def ddg_search(query, n=5):
@@ -181,34 +175,29 @@ def ddg_search(query, n=5):
             timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
         d = r.json()
         if d.get('AbstractText'):
-            results.append({'title': d.get('Heading', ''),
-                            'snippet': d['AbstractText'],
-                            'url': d.get('AbstractURL', '')})
+            results.append({'title': d.get('Heading',''), 'snippet': d['AbstractText'],
+                            'url': d.get('AbstractURL','')})
         for t in d.get('RelatedTopics', [])[:3]:
             if isinstance(t, dict) and t.get('Text'):
-                results.append({'title': t['Text'][:60],
-                                'snippet': t['Text'],
-                                'url': t.get('FirstURL', '')})
+                results.append({'title': t['Text'][:60], 'snippet': t['Text'],
+                                'url': t.get('FirstURL','')})
     except Exception as e:
-        print(f'  DDG instant error: {e}')
+        print(f'  DDG instant: {e}')
 
     if len(results) < 2:
         try:
-            r = requests.post('https://html.duckduckgo.com/html/',
-                data={'q': query}, timeout=10,
-                headers={'User-Agent': 'Mozilla/5.0'})
+            r = requests.post('https://html.duckduckgo.com/html/', data={'q': query},
+                timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
             snips  = re.findall(r'class="result__snippet"[^>]*>(.*?)</a>', r.text, re.S)
-            titles = re.findall(r'class="result__a"[^>]*>(.*?)</a>', r.text, re.S)
-            hrefs  = re.findall(r'class="result__a" href="([^"]+)"', r.text)
+            titles = re.findall(r'class="result__a"[^>]*>(.*?)</a>',       r.text, re.S)
+            hrefs  = re.findall(r'class="result__a" href="([^"]+)"',        r.text)
             for i in range(min(n, len(snips))):
                 results.append({
-                    'title':   re.sub(r'<[^>]+>', '', titles[i]).strip() if i < len(titles) else '',
-                    'snippet': re.sub(r'<[^>]+>', '', snips[i]).strip(),
-                    'url':     hrefs[i] if i < len(hrefs) else ''
-                })
+                    'title':   re.sub(r'<[^>]+>','',titles[i]).strip() if i<len(titles) else '',
+                    'snippet': re.sub(r'<[^>]+>','',snips[i]).strip(),
+                    'url':     hrefs[i] if i<len(hrefs) else ''})
         except Exception as e:
-            print(f'  DDG html error: {e}')
-
+            print(f'  DDG html: {e}')
     return results[:n]
 
 def inject_search(query, contents):
@@ -236,7 +225,7 @@ def inject_search(query, contents):
     return enhanced
 
 # ── Main loop ──────────────────────────────────────────────────────────────
-print('Proxy started — Gemini + Puter + DDG')
+print('Proxy started — Gemini direct + Puter (OpenAI-compat) + DDG')
 last_id = None
 
 while True:
@@ -268,13 +257,11 @@ while True:
                         print(f'  searching: {last_text[:60]}')
                         contents = inject_search(last_text, contents)
                 except Exception as e:
-                    print(f'  search inject error: {e}')
+                    print(f'  search error: {e}')
 
             if use_puter and req_token:
-                print(f'  -> Puter ({model})')
                 result = call_puter(model, contents, req_token)
             else:
-                print(f'  -> Gemini ({model})')
                 result = call_gemini(model, contents)
 
             resp_path = f'queue/response_{req_id}.json'
