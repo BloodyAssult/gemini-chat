@@ -14,19 +14,17 @@
   --model-bubble:#0f0f1a;--glow:rgba(108,142,247,0.12);
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(108,142,247,0.04),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(157,110,247,0.04),transparent 60%);pointer-events:none;z-index:0;}
 
-/* ── ANIMATED BG ── */
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(108,142,247,0.04) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(157,110,247,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
-
-/* ── SETUP ── */
+/* SETUP */
 #setup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:300;padding:16px;overflow-y:auto;backdrop-filter:blur(16px);}
-.card{background:rgba(15,15,26,0.95);border:1px solid rgba(140,140,255,0.15);border-radius:22px;padding:26px 22px;max-width:460px;width:100%;box-shadow:0 0 80px rgba(108,142,247,0.08),inset 0 1px 0 rgba(255,255,255,0.05);}
+.card{background:rgba(15,15,26,0.97);border:1px solid rgba(140,140,255,0.15);border-radius:22px;padding:26px 22px;max-width:460px;width:100%;box-shadow:0 0 80px rgba(108,142,247,0.08),inset 0 1px 0 rgba(255,255,255,0.04);}
 .card h2{font-size:19px;margin-bottom:5px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .card .sub{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.6;}
-.tabs2{display:flex;gap:0;margin-bottom:18px;background:var(--bg3);border-radius:11px;padding:3px;border:1px solid var(--border);}
-.tab2{flex:1;padding:8px 6px;border-radius:8px;cursor:pointer;text-align:center;transition:all .2s;font-size:12px;font-weight:600;color:var(--text2);}
-.tab2.on{background:var(--bg4);color:var(--text);box-shadow:0 2px 10px rgba(0,0,0,.4);}
-.tab-pages>div{display:none;}.tab-pages>div.on{display:block;}
+.stabs{display:flex;gap:0;margin-bottom:18px;background:var(--bg3);border-radius:11px;padding:3px;border:1px solid var(--border);}
+.stab{flex:1;padding:8px 6px;border-radius:8px;cursor:pointer;text-align:center;transition:all .2s;font-size:12px;font-weight:600;color:var(--text2);}
+.stab.on{background:var(--bg4);color:var(--text);box-shadow:0 2px 10px rgba(0,0,0,.4);}
+.spages>div{display:none;}.spages>div.on{display:block;}
 .ibox{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.9;margin-bottom:8px;}
 .ibox.blue{background:rgba(108,142,247,0.06);border:1px solid rgba(108,142,247,0.18);color:var(--text2);}
 .ibox.blue strong{color:var(--accent);}
@@ -37,16 +35,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .card input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:9px 13px;font-size:13px;outline:none;direction:ltr;transition:border-color .2s,box-shadow .2s;}
 .card input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,142,247,.08);}
 .hint{font-size:11px;color:#3a3a60;margin-top:5px;line-height:1.6;direction:rtl;}
-.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--purple));color:white;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;letter-spacing:.3px;transition:opacity .2s,transform .1s;box-shadow:0 4px 20px rgba(108,142,247,.25);}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--purple));color:white;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;transition:opacity .2s,transform .1s;box-shadow:0 4px 20px rgba(108,142,247,.25);}
 .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
-.step{font-size:12px;color:var(--text2);line-height:2.1;direction:rtl;}
+.step{font-size:12px;color:var(--text2);line-height:2.1;}
 .step code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--accent);direction:ltr;display:inline-block;}
 hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0;}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 .app-body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 #sidebar{width:230px;background:rgba(10,10,20,0.8);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .3s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(10px);}
 #sidebar.collapsed{width:0;overflow:hidden;}
 .sb-head{padding:12px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -60,27 +58,27 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0;}
 .si:hover{background:var(--bg3);}
 .si.on{background:var(--bg4);border:1px solid var(--border);}
 .si-n{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.si-m{font-size:10px;color:var(--text2);margin-top:2px;}
+.si-m{font-size:10px;color:var(--text2);margin-top:2px;display:flex;gap:5px;align-items:center;}
 .si-del{position:absolute;left:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#444;font-size:13px;cursor:pointer;opacity:0;transition:opacity .15s;}
 .si:hover .si-del{opacity:1;}
 .si-del:hover{color:var(--red);}
 .no-s{font-size:12px;color:var(--text2);text-align:center;padding:20px 8px;}
 
-/* ── HEADER ── */
+/* HEADER */
 .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-header{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(10,10,20,0.7);gap:8px;flex-shrink:0;backdrop-filter:blur(10px);}
+header{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);background:rgba(10,10,20,0.7);gap:7px;flex-shrink:0;backdrop-filter:blur(10px);}
 .bico{background:none;border:none;color:var(--text2);font-size:17px;cursor:pointer;padding:4px 5px;border-radius:7px;transition:all .2s;}
 .bico:hover{color:var(--text);background:var(--bg3);}
-.logo{font-size:16px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;letter-spacing:-.3px;}
+.logo{font-size:15px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+#title-bar{flex:1;font-size:11.5px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
 
 /* Provider toggle */
 .prov-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px;gap:2px;flex-shrink:0;}
-.pt{padding:4px 10px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .2s;white-space:nowrap;}
-.pt.on.gemini{background:linear-gradient(135deg,rgba(108,142,247,0.3),rgba(108,142,247,0.15));color:var(--accent);box-shadow:0 1px 6px rgba(108,142,247,.2);}
-.pt.on.puter{background:linear-gradient(135deg,rgba(61,220,132,0.3),rgba(61,220,132,0.1));color:var(--green);box-shadow:0 1px 6px rgba(61,220,132,.2);}
+.pt{padding:4px 10px;border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .25s;white-space:nowrap;user-select:none;}
+.pt.on.gemini{background:linear-gradient(135deg,rgba(108,142,247,0.35),rgba(108,142,247,0.18));color:var(--accent);box-shadow:0 1px 6px rgba(108,142,247,.2);}
+.pt.on.puter{background:linear-gradient(135deg,rgba(61,220,132,0.35),rgba(61,220,132,0.12));color:var(--green);box-shadow:0 1px 6px rgba(61,220,132,.2);}
 
-#title-bar{flex:1;font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
-header select{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 7px;font-size:12px;cursor:pointer;outline:none;direction:ltr;max-width:140px;transition:border-color .2s;}
+header select{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 7px;font-size:12px;cursor:pointer;outline:none;direction:ltr;max-width:135px;transition:border-color .2s;}
 header select:focus{border-color:var(--accent);}
 .hbtns{display:flex;gap:5px;align-items:center;}
 .bsm{background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;transition:all .2s;}
@@ -89,13 +87,12 @@ header select:focus{border-color:var(--accent);}
 .sdot.on{background:var(--green);box-shadow:0 0 7px rgba(61,220,132,.6);}
 .sdot.busy{background:var(--amber);animation:pulse 1s infinite;}
 .sdot.err{background:var(--red);}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
-/* ── MESSAGES ── */
-#messages{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;}
+/* MESSAGES */
+#messages{flex:1;overflow-y:auto;padding:15px 13px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;}
 #messages::-webkit-scrollbar{width:4px;}
 #messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-
 .msg{display:flex;gap:8px;max-width:92%;animation:msgIn .3s cubic-bezier(.34,1.4,.64,1);}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
 .msg.user{align-self:flex-start;flex-direction:row-reverse;}
@@ -106,7 +103,7 @@ header select:focus{border-color:var(--accent);}
 .bbl{padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.8;white-space:pre-wrap;word-break:break-word;}
 .msg.user .bbl{background:var(--user-bubble);border-bottom-right-radius:3px;color:#c8dcff;box-shadow:0 2px 15px rgba(34,64,110,.3);}
 .msg.model .bbl{background:var(--model-bubble);border:1px solid var(--border);border-bottom-left-radius:3px;direction:auto;box-shadow:0 2px 15px rgba(0,0,0,.2);}
-.bbl code{background:rgba(108,142,247,.12);padding:2px 6px;border-radius:4px;font-family:'Courier New',monospace;font-size:12px;color:#a5c8ff;}
+.bbl code{background:rgba(108,142,247,.12);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:#a5c8ff;}
 .bbl pre{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:10px;padding:12px;overflow-x:auto;margin:8px 0;direction:ltr;}
 .bbl pre code{background:none;padding:0;color:#c8dcff;}
 .bbl strong{color:#aed6f1;}.bbl em{color:#c8b8ff;}
@@ -115,58 +112,53 @@ header select:focus{border-color:var(--accent);}
 .sc{background:var(--bg3);border:1px solid var(--border);color:var(--accent);border-radius:16px;padding:3px 9px;font-size:11px;text-decoration:none;transition:background .15s;}
 .sc:hover{background:var(--bg4);}
 
-/* ── TYPING ── */
+/* TYPING */
 .tbbl{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--model-bubble);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:3px;}
 .wave{display:flex;gap:5px;align-items:center;}
-.wd{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:wv 1.4s ease infinite;}
-.wd:nth-child(2){animation-delay:.18s;background:var(--purple);}
-.wd:nth-child(3){animation-delay:.36s;}
-@keyframes wv{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
+.wd{width:7px;height:7px;border-radius:50%;animation:wv 1.4s ease infinite;}
+.wd:nth-child(1){background:var(--accent);}
+.wd:nth-child(2){background:var(--purple);animation-delay:.18s;}
+.wd:nth-child(3){background:var(--accent);animation-delay:.36s;}
+@keyframes wv{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-7px);opacity:1}}
 .tl{font-size:12px;color:var(--text2);}
 
-/* ── EMPTY ── */
+/* EMPTY */
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:20px;}
-.eico{width:66px;height:66px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 8px 36px rgba(108,142,247,.2),inset 0 1px 0 rgba(255,255,255,.1);animation:float 4s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.empty h3{font-size:18px;font-weight:700;letter-spacing:-.3px;}
+.eico{width:66px;height:66px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 8px 36px rgba(108,142,247,.2),inset 0 1px 0 rgba(255,255,255,.1);animation:flt 4s ease-in-out infinite;}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.empty h3{font-size:18px;font-weight:700;}
 .empty p{font-size:13px;color:var(--text2);text-align:center;max-width:280px;}
 .chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
 .chip{background:rgba(22,22,37,0.8);border:1px solid var(--border);color:var(--text2);border-radius:18px;padding:7px 14px;font-size:12px;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);}
 .chip:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,.06);transform:translateY(-1px);}
 
-/* ── FOOTER ── */
+/* FOOTER */
 footer{padding:9px 13px 12px;border-top:1px solid var(--border);background:rgba(10,10,20,0.8);flex-shrink:0;backdrop-filter:blur(10px);}
-.toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center;}
-.tbtn{background:rgba(22,22,37,0.8);border:1px solid var(--border);color:var(--text2);border-radius:18px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap;backdrop-filter:blur(4px);}
+.toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.tbtn{background:rgba(22,22,37,0.8);border:1px solid var(--border);color:var(--text2);border-radius:18px;padding:5px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap;}
 .tbtn:hover{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,.06);}
-.tbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,.1);box-shadow:0 0 10px rgba(108,142,247,.1);}
+.tbtn.on{border-color:var(--accent);color:var(--accent);background:rgba(108,142,247,.1);}
 .tbtn.off{opacity:.3;pointer-events:none;}
 #img-prev{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
 .pw{position:relative;animation:msgIn .2s ease;}
 .pw img{width:52px;height:52px;object-fit:cover;border-radius:9px;border:1px solid var(--border);}
 .pw .dl{position:absolute;top:-4px;right:-4px;background:var(--red);border:none;color:white;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .in-row{display:flex;gap:8px;align-items:flex-end;}
-#prompt{flex:1;background:rgba(22,22,37,0.8);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 14px;font-size:13.5px;resize:none;outline:none;max-height:130px;min-height:42px;line-height:1.6;font-family:inherit;direction:auto;transition:border-color .2s,box-shadow .2s;backdrop-filter:blur(4px);}
+#prompt{flex:1;background:rgba(22,22,37,0.8);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 14px;font-size:13.5px;resize:none;outline:none;max-height:130px;min-height:42px;line-height:1.6;font-family:inherit;direction:auto;transition:border-color .2s,box-shadow .2s;}
 #prompt:focus{border-color:rgba(108,142,247,.5);box-shadow:0 0 0 3px rgba(108,142,247,.06);}
-.send-wrap{position:relative;flex-shrink:0;}
-#sbtn{background:linear-gradient(135deg,var(--accent),var(--purple));color:white;border:none;border-radius:11px;width:42px;height:42px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 4px 16px rgba(108,142,247,.3);}
+.send-wrap{position:relative;flex-shrink:0;width:42px;height:42px;}
+#sbtn{position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--purple));color:white;border:none;border-radius:11px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 4px 16px rgba(108,142,247,.3);}
 #sbtn:hover{transform:scale(1.07);box-shadow:0 6px 20px rgba(108,142,247,.4);}
-#sbtn:disabled{background:var(--bg3);box-shadow:none;cursor:not-allowed;transform:none;}
-
-/* Cancel button */
-#cbtn{display:none;position:absolute;inset:0;background:rgba(255,92,92,0.9);color:white;border:none;border-radius:11px;cursor:pointer;font-size:14px;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px);}
-#cbtn.visible{display:flex;animation:popIn .2s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
-#cbtn:hover{background:rgba(255,92,92,1);}
-
+#sbtn:disabled{background:var(--bg3);box-shadow:none;cursor:not-allowed;transform:none;opacity:.5;}
+#cbtn{display:none;position:absolute;inset:0;background:rgba(255,80,80,0.95);color:white;border:none;border-radius:11px;cursor:pointer;font-size:15px;align-items:center;justify-content:center;transition:all .2s;}
+#cbtn.show{display:flex;animation:popIn .22s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+#cbtn:hover{background:var(--red);}
 .sbar{font-size:11px;color:var(--text2);text-align:center;margin-top:5px;min-height:15px;display:flex;align-items:center;justify-content:center;gap:5px;}
 .sp{width:55px;height:2px;background:var(--bg3);border-radius:2px;overflow:hidden;}
 .spi{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:2px;animation:prg 1.8s ease infinite;width:40%;}
 @keyframes prg{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
 #fi{display:none;}
-
-/* Puter locked overlay on models */
-.locked-model{opacity:.4;}
 </style>
 </head>
 <body>
@@ -176,18 +168,16 @@ footer{padding:9px 13px 12px;border-top:1px solid var(--border);background:rgba(
   <div class="card">
     <h2>✦ Gemini Chat</h2>
     <div class="sub">یه بار تنظیم — برای همیشه بدون VPN</div>
-
-    <div class="tabs2">
-      <div class="tab2 on" onclick="selTab('main')">⚙️ GitHub (اجباری)</div>
-      <div class="tab2" onclick="selTab('puter')">🟢 Puter (اختیاری)</div>
+    <div class="stabs">
+      <div class="stab on" onclick="selSTab('main')">⚙️ GitHub (اجباری)</div>
+      <div class="stab" onclick="selSTab('puter')">🟢 Puter (اختیاری)</div>
     </div>
-
-    <div class="tab-pages">
-      <div id="tp-main" class="on">
+    <div class="spages">
+      <div id="sp-main" class="on">
         <div class="ibox blue">
           <strong>✅ بدون VPN</strong> — github.com وایت‌لیسته<br>
-          <strong>✅ Gemini همه مدل‌ها</strong> — با API key خودت<br>
-          <strong>✅ وب سرچ DuckDuckGo</strong> — رایگان<br>
+          <strong>✅ Gemini API</strong> — همه مدل‌ها با API key<br>
+          <strong>✅ وب سرچ DDG</strong> — رایگان<br>
           <strong>✅ آنالیز عکس</strong>
         </div>
         <div class="fl">GitHub Username</div>
@@ -198,34 +188,31 @@ footer{padding:9px 13px 12px;border-top:1px solid var(--border);background:rgba(
         <input id="cfg-token" type="password" placeholder="ghp_xxxxxxxxxxxx"/>
         <div class="hint">⚠️ قبل از چت، Actions رو در GitHub اجرا کن</div>
       </div>
-
-      <div id="tp-puter">
+      <div id="sp-puter">
         <div class="ibox green">
-          <strong>✅ GPT-4o، Claude، Gemini Pro</strong> — همه رایگان<br>
-          <strong>✅ فقط یه بار VPN</strong> برای لاگین — بعدش دیگه نه<br>
-          <strong>✅ همه چیز از GitHub</strong> رد میشه
+          <strong>✅ GPT-4o، Claude، همه Gemini</strong> — رایگان<br>
+          <strong>✅ تولید تصویر</strong> — Gemini Image<br>
+          <strong>✅ فقط یه بار VPN</strong> برای لاگین
         </div>
         <hr class="sep">
         <div class="step">
           <strong>یه بار با VPN:</strong><br>
           ۱. برو <code>puter.com</code> → ثبت‌نام رایگان<br>
-          ۲. F12 → Console → بنویس:<br>
+          ۲. F12 → Console → بنویس و Enter:<br>
           <code>localStorage.getItem('puter_auth_token')</code><br>
-          ۳. مقدار رو کپی کن و اینجا بذار:
+          ۳. مقدار (بدون کوتیشن) رو اینجا بذار:
         </div>
-        <div class="fl">Puter Token (اختیاری)</div>
+        <div class="fl">Puter Token</div>
         <input id="cfg-puter" type="password" placeholder="token از localStorage"/>
-        <div class="hint">بدون token، فقط Gemini API کار میکنه</div>
-        <div class="ibox warn" style="margin-top:10px;">⚠️ Token رو هم در GitHub Secrets با اسم PUTER_TOKEN بذار</div>
+        <div class="hint">بدون token، Puter mode کار نمیکنه</div>
+        <div class="ibox warn" style="margin-top:10px;">⚠️ همین token رو در GitHub Secrets با اسم PUTER_TOKEN هم بذار</div>
       </div>
     </div>
-
     <button class="btn-primary" onclick="saveConfig()">ذخیره و شروع ✦</button>
   </div>
 </div>
 
 <div class="app-body">
-  <!-- SIDEBAR -->
   <div id="sidebar">
     <div class="sb-head">
       <span class="sb-title">تاریخچه</span>
@@ -234,34 +221,32 @@ footer{padding:9px 13px 12px;border-top:1px solid var(--border);background:rgba(
     <div id="sess-list"><div class="no-s">هنوز چتی نداری</div></div>
   </div>
 
-  <!-- CHAT -->
   <div class="chat-area">
     <header>
       <button class="bico" onclick="toggleSb()">☰</button>
       <span class="logo">✦</span>
       <span id="title-bar">چت جدید</span>
-
-      <!-- Provider toggle -->
       <div class="prov-toggle">
-        <div class="pt on gemini" id="pt-gemini" onclick="setProvider('gemini')">Gemini</div>
-        <div class="pt puter" id="pt-puter" onclick="setProvider('puter')">Puter</div>
+        <div class="pt on gemini" id="pt-g" onclick="setProvider('gemini')">Gemini</div>
+        <div class="pt puter" id="pt-p" onclick="setProvider('puter')">Puter</div>
       </div>
-
       <select id="msel" onchange="onModelChange()">
-        <optgroup label="Gemini">
+        <optgroup label="── Gemini">
           <option value="gemini-3-flash-preview">3 Flash</option>
           <option value="gemini-3.1-pro-preview">3.1 Pro ⭐</option>
+          <option value="gemini-3.1-flash-lite-preview">3.1 Flash Lite</option>
           <option value="gemini-2.5-flash">2.5 Flash</option>
           <option value="gemini-2.5-pro">2.5 Pro</option>
         </optgroup>
-        <optgroup label="Puter models" id="puter-optgroup">
+        <optgroup label="── GPT / Claude (Puter)">
           <option value="openai/gpt-5.2-chat">GPT-5.2 🔍</option>
           <option value="gpt-4o">GPT-4o</option>
           <option value="claude-sonnet-4-6">Claude Sonnet</option>
+        </optgroup>
+        <optgroup label="── تولید تصویر (Puter)">
           <option value="gemini-3.1-flash-image-preview">🎨 Gemini Image</option>
         </optgroup>
       </select>
-
       <div class="hbtns">
         <div class="sdot on" id="sdot"></div>
         <button class="bsm" onclick="showSetup()">⚙️</button>
@@ -274,8 +259,8 @@ footer{padding:9px 13px 12px;border-top:1px solid var(--border);background:rgba(
         <h3>Gemini Chat</h3>
         <p id="empty-desc">Actions رو توی GitHub اجرا کن، بعد بپرس</p>
         <div class="chips">
-          <span class="chip" onclick="useChip(this)">سلام! چی میتونی بکنی؟</span>
-          <span class="chip" onclick="useChip(this)">آخرین اخبار AI امروز</span>
+          <span class="chip" onclick="useChip(this)">سلام!</span>
+          <span class="chip" onclick="useChip(this)">آخرین اخبار AI</span>
           <span class="chip" onclick="useChip(this)">کد Python بنویس</span>
           <span class="chip" onclick="useChip(this)">یه گربه بکش 🎨</span>
         </div>
@@ -304,14 +289,14 @@ footer{padding:9px 13px 12px;border-top:1px solid var(--border);background:rgba(
 </div>
 
 <script>
-const SK='gch_s7', CK='gch_c5', AK='gch_a5';
+const SK='gch_s8',CK='gch_c6',AK='gch_a6';
 let cfg={}, sessions={}, activeId=null;
 let loading=false, cancelled=false;
 let doSearch=false, doImgGen=false, pendImgs=[];
-let curProvider='gemini'; // 'gemini' or 'puter'
-let curTab='main';
+let curProvider='gemini';
+let curSTab='main';
 
-// ── INIT ──────────────────────────────────────────────────────────────────
+// ── INIT ──
 function init(){
   const c=localStorage.getItem(CK);
   if(c){cfg=JSON.parse(c);document.getElementById('setup-overlay').style.display='none';}
@@ -320,26 +305,26 @@ function init(){
   renderSess();
   const last=localStorage.getItem(AK);
   if(last&&sessions[last])loadSess(last); else newSess();
-  updateProviderUI();
+  applyProviderUI();
 }
 
-// ── SETUP ─────────────────────────────────────────────────────────────────
-function selTab(t){
-  curTab=t;
-  document.querySelectorAll('.tab2').forEach((el,i)=>el.classList.toggle('on',(t==='main'&&i===0)||(t==='puter'&&i===1)));
-  document.getElementById('tp-main').classList.toggle('on',t==='main');
-  document.getElementById('tp-puter').classList.toggle('on',t==='puter');
+// ── SETUP ──
+function selSTab(t){
+  curSTab=t;
+  document.querySelectorAll('.stab').forEach((el,i)=>el.classList.toggle('on',(t==='main'&&i===0)||(t==='puter'&&i===1)));
+  document.getElementById('sp-main').classList.toggle('on',t==='main');
+  document.getElementById('sp-puter').classList.toggle('on',t==='puter');
 }
 function saveConfig(){
   const u=gv('cfg-user'),r=gv('cfg-repo'),t=gv('cfg-token');
-  if(!u||!r||!t){alert('GitHub Username، Repository و Token رو پر کن');return;}
+  if(!u||!r||!t){alert('GitHub Username، Repository و Token الزامیه');return;}
   cfg={user:u,repo:r,token:t,puterToken:gv('cfg-puter')};
   localStorage.setItem(CK,JSON.stringify(cfg));
   document.getElementById('setup-overlay').style.display='none';
-  updateProviderUI();
+  applyProviderUI();
 }
 function showSetup(){
-  selTab('main');
+  selSTab('main');
   if(cfg.user)document.getElementById('cfg-user').value=cfg.user;
   if(cfg.repo)document.getElementById('cfg-repo').value=cfg.repo;
   if(cfg.token)document.getElementById('cfg-token').value=cfg.token;
@@ -348,45 +333,52 @@ function showSetup(){
 }
 function gv(id){return document.getElementById(id).value.trim();}
 
-// ── PROVIDER TOGGLE ───────────────────────────────────────────────────────
+// ── PROVIDER ──
 function setProvider(p){
   if(p==='puter'&&!cfg.puterToken){
-    alert('برای حالت Puter، ابتدا Puter Token رو در تنظیمات وارد کن.');
-    showSetup();setTimeout(()=>selTab('puter'),100);
+    alert('Puter Token لازمه — برو تنظیمات تب Puter');
+    showSetup();setTimeout(()=>selSTab('puter'),150);
     return;
   }
   curProvider=p;
-  updateProviderUI();
+  applyProviderUI();
 }
 
-function updateProviderUI(){
+function applyProviderUI(){
   const hasPuter=!!cfg.puterToken;
   const isPuter=curProvider==='puter'&&hasPuter;
-
-  document.getElementById('pt-gemini').classList.toggle('on',!isPuter);
-  document.getElementById('pt-puter').classList.toggle('on',isPuter);
-
+  document.getElementById('pt-g').classList.toggle('on',!isPuter);
+  document.getElementById('pt-p').classList.toggle('on',isPuter);
   // imggen only with puter
   document.getElementById('btn-imggen').classList.toggle('off',!isPuter);
-  if(!isPuter&&doImgGen){doImgGen=false;document.getElementById('btn-imggen').classList.remove('on');}
-
-  // empty desc
+  if(!isPuter&&doImgGen){
+    doImgGen=false;
+    document.getElementById('btn-imggen').classList.remove('on');
+    document.getElementById('msel').value='gemini-3-flash-preview';
+  }
   const ed=document.getElementById('empty-desc');
-  if(ed)ed.textContent=isPuter?'Puter آماده‌ست — بپرس!':'Actions رو توی GitHub اجرا کن، بعد بپرس';
+  if(ed)ed.textContent=isPuter?'Puter آماده — بپرس! (بدون VPN ✅)':'Actions رو توی GitHub اجرا کن، بعد بپرس';
 }
 
 function onModelChange(){
-  // if image model selected, auto-switch to puter
   const m=document.getElementById('msel').value;
-  if(m.includes('image')&&cfg.puterToken){
+  const puterOnlyModels=['openai/gpt-5.2-chat','gpt-4o','claude-sonnet-4-6','gemini-3.1-flash-image-preview'];
+  if(puterOnlyModels.includes(m)){
+    if(!cfg.puterToken){
+      alert('این مدل نیاز به Puter Token داره');
+      document.getElementById('msel').value='gemini-3-flash-preview';
+      return;
+    }
     curProvider='puter';
+    applyProviderUI();
+  }
+  if(m==='gemini-3.1-flash-image-preview'){
     doImgGen=true;
     document.getElementById('btn-imggen').classList.add('on');
-    updateProviderUI();
   }
 }
 
-// ── SESSIONS ──────────────────────────────────────────────────────────────
+// ── SESSIONS ──
 function genId(){return 's'+Date.now().toString(36)+Math.random().toString(36).slice(2);}
 function newSess(){
   const id=genId();
@@ -401,7 +393,7 @@ function loadSess(id){
   if(!sess.history||!sess.history.length){
     el.innerHTML=`<div class="empty" id="empty-state">
       <div class="eico">✦</div><h3>Gemini Chat</h3>
-      <p id="empty-desc">${curProvider==='puter'&&cfg.puterToken?'Puter آماده‌ست!':'Actions رو اجرا کن'}</p>
+      <p id="empty-desc">${curProvider==='puter'&&cfg.puterToken?'Puter آماده!':'Actions رو اجرا کن'}</p>
       <div class="chips">
         <span class="chip" onclick="useChip(this)">سلام!</span>
         <span class="chip" onclick="useChip(this)">آخرین اخبار AI</span>
@@ -409,7 +401,7 @@ function loadSess(id){
         <span class="chip" onclick="useChip(this)">یه گربه بکش 🎨</span>
       </div></div>`;
   } else {
-    sess.history.forEach(m=>addMsg(m.role,m.text,m.imgs,m.srcs,m.genImgs,false));
+    sess.history.forEach(m=>addMsg(m.role,m.text,m.imgs,m.srcs,[],false));
   }
   document.getElementById('title-bar').textContent=sess.title;
   renderSess();
@@ -439,20 +431,14 @@ function saveSess(){localStorage.setItem(SK,JSON.stringify(sessions));}
 function setTitle(id,t){if(sessions[id]){sessions[id].title=t;saveSess();if(id===activeId)document.getElementById('title-bar').textContent=t;renderSess();}}
 function toggleSb(){document.getElementById('sidebar').classList.toggle('collapsed');}
 
-// ── TOOLS ─────────────────────────────────────────────────────────────────
-function toggleSearch(){
-  doSearch=!doSearch;
-  document.getElementById('btn-search').classList.toggle('on',doSearch);
-}
+// ── TOOLS ──
+function toggleSearch(){doSearch=!doSearch;document.getElementById('btn-search').classList.toggle('on',doSearch);}
 function toggleImgGen(){
-  if(!cfg.puterToken){alert('تولید تصویر نیاز به Puter Token داره.');showSetup();return;}
+  if(!cfg.puterToken){alert('تولید تصویر نیاز به Puter Token داره');showSetup();return;}
   doImgGen=!doImgGen;
   document.getElementById('btn-imggen').classList.toggle('on',doImgGen);
-  if(doImgGen){
-    curProvider='puter';
-    document.getElementById('msel').value='gemini-3.1-flash-image-preview';
-    updateProviderUI();
-  }
+  if(doImgGen){curProvider='puter';document.getElementById('msel').value='gemini-3.1-flash-image-preview';applyProviderUI();}
+  else{document.getElementById('msel').value='gemini-3-flash-preview';}
 }
 function addImgs(input){
   Array.from(input.files).forEach(f=>{
@@ -464,30 +450,26 @@ function addImgs(input){
     };r.readAsDataURL(f);
   });input.value='';
 }
-function renderPrev(){
-  document.getElementById('img-prev').innerHTML=pendImgs.map(i=>`
-    <div class="pw"><img src="${i.prev}"/>
-    <button class="dl" onclick="rmImg('${i.id}')">×</button></div>`).join('');
-}
+function renderPrev(){document.getElementById('img-prev').innerHTML=pendImgs.map(i=>`<div class="pw"><img src="${i.prev}"/><button class="dl" onclick="rmImg('${i.id}')">×</button></div>`).join('');}
 function rmImg(id){pendImgs=pendImgs.filter(x=>x.id!==id);renderPrev();}
 
-// ── CANCEL ────────────────────────────────────────────────────────────────
+// ── CANCEL ──
 function cancelReq(){
   cancelled=true;
-  document.getElementById('cbtn').classList.remove('visible');
-  removeTyping();
-  addMsg('model','⚠️ درخواست لغو شد.',null,null,null,true);
   setLoading(false);
+  removeTyping();
+  addMsg('model','⚠️ درخواست لغو شد.',null,null,[],true);
   setSbar('ready');
 }
 function setLoading(v){
-  loading=v;
+  loading=v;cancelled=!v?cancelled:false;
   document.getElementById('sbtn').disabled=v;
-  document.getElementById('cbtn').classList.toggle('visible',v);
-  if(v)setSdot('busy'); else setSdot('on');
+  const cb=document.getElementById('cbtn');
+  if(v)cb.classList.add('show'); else cb.classList.remove('show');
+  setSdot(v?'busy':'on');
 }
 
-// ── GITHUB ────────────────────────────────────────────────────────────────
+// ── GITHUB ──
 const GH='https://api.github.com';
 function ghH(){return{'Authorization':`token ${cfg.token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};}
 async function ghGet(path){
@@ -503,7 +485,7 @@ async function ghPut(path,content,sha){
   return r.ok;
 }
 
-// ── SEND ──────────────────────────────────────────────────────────────────
+// ── SEND ──
 const sl=ms=>new Promise(r=>setTimeout(r,ms));
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
 
@@ -523,12 +505,11 @@ async function doSend(){
   cancelled=false;
   setLoading(true);
 
-  addMsg('user',text,imgs.map(i=>i.prev),null,null,true);
+  addMsg('user',text,imgs.map(i=>i.prev),null,[],true);
   sess.history.push({role:'user',text,imgs:imgs.map(i=>i.prev)});
   showTyping();setSbar('s');
 
   try{
-    // Build history
     const parts=[];
     imgs.forEach(i=>parts.push({inline_data:{mime_type:i.mime,data:i.b64}}));
     if(text)parts.push({text});
@@ -540,20 +521,19 @@ async function doSend(){
     const id=uid();
     const ex=await ghGet('queue/prompt.json');
     const payload={
-      id, model,
+      id,model,
       use_search:  doSearch,
-      use_puter:   isPuter,       // ← این کلید مهمه
-      puter_token: isPuter ? cfg.puterToken : '',
+      use_puter:   isPuter,
+      puter_token: isPuter?cfg.puterToken:'',
       need_title:  isFirst,
       contents:    history
     };
     const ok=await ghPut('queue/prompt.json',payload,ex?.sha);
     if(!ok)throw new Error('ارسال ناموفق — token یا repo رو چک کن');
-
     setSbar('w');
+
     const {reply,srcs}=await pollResp(id);
     if(cancelled)return;
-
     removeTyping();
     addMsg('model',reply,null,srcs,[],true);
     sess.history.push({role:'model',text:reply,srcs});
@@ -562,7 +542,7 @@ async function doSend(){
   }catch(e){
     if(cancelled)return;
     removeTyping();
-    addMsg('model','❌ خطا: '+e.message,null,null,null,true);
+    addMsg('model','❌ خطا: '+e.message,null,null,[],true);
     setSdot('err');setSbar('err');
   }finally{
     if(!cancelled)setLoading(false);
@@ -589,26 +569,27 @@ async function pollResp(id){
           const srcs=chunks.map(c=>({title:c.web?.title||'',uri:c.web?.uri||''})).filter(s=>s.uri);
           return{reply:t,srcs};
         }
-        if(res.data?.error)throw new Error(res.data.error.message);
+        if(res.data?.error){
+          const msg=res.data.error.message||JSON.stringify(res.data.error);
+          throw new Error(msg);
+        }
       }
     }catch(e){if(e.message&&e.message!=='')throw e;}
   }
   throw new Error('timeout — آیا Actions workflow اجراست؟');
 }
 
-// ── UI ────────────────────────────────────────────────────────────────────
+// ── UI ──
 function addMsg(role,text,imgPrevs,srcs,genImgs,scroll){
   const empty=document.getElementById('empty-state');if(empty)empty.remove();
   const msgsEl=document.getElementById('messages');
   const div=document.createElement('div');div.className=`msg ${role}`;
   const av=document.createElement('div');av.className='av';av.textContent=role==='user'?'ش':'G';
   const bbl=document.createElement('div');bbl.className='bbl';
-
   if(imgPrevs&&imgPrevs.length){
     imgPrevs.forEach(src=>{const img=document.createElement('img');img.src=src;bbl.appendChild(img);});
     if(text){const p=document.createElement('div');p.style.marginTop='8px';p.textContent=text;bbl.appendChild(p);}
   } else if(text){bbl.innerHTML=fmt(text);}
-
   if(genImgs&&genImgs.length){
     genImgs.forEach(src=>{
       const img=document.createElement('img');img.src=src;
@@ -627,7 +608,6 @@ function addMsg(role,text,imgPrevs,srcs,genImgs,scroll){
   div.appendChild(av);div.appendChild(bbl);msgsEl.appendChild(div);
   if(scroll)msgsEl.scrollTop=msgsEl.scrollHeight;
 }
-
 function fmt(t){
   if(!t)return '';
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -639,14 +619,10 @@ function fmt(t){
     .replace(/^## (.+)$/gm,'<strong style="font-size:14.5px;display:block;margin:7px 0">$1</strong>');
 }
 function esc(t){return(t||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 function showTyping(){
   const el=document.getElementById('messages');
   const div=document.createElement('div');div.className='msg model';div.id='typing';
-  div.innerHTML=`<div class="av">G</div>
-    <div class="tbbl"><div class="wave">
-      <span class="wd"></span><span class="wd"></span><span class="wd"></span>
-    </div><span class="tl" id="tl">در حال پردازش...</span></div>`;
+  div.innerHTML=`<div class="av">G</div><div class="tbbl"><div class="wave"><span class="wd"></span><span class="wd"></span><span class="wd"></span></div><span class="tl" id="tl">در حال پردازش...</span></div>`;
   el.appendChild(div);el.scrollTop=el.scrollHeight;
 }
 function removeTyping(){const el=document.getElementById('typing');if(el)el.remove();}
@@ -655,13 +631,13 @@ function setSbar(st,model,i){
   const el=document.getElementById('sbar');
   const tl=document.getElementById('tl');
   const bar='<div class="sp"><div class="spi"></div></div>';
-  const map={
-    s:['ارسال...',1], w:['منتظر Actions...',1],
+  const mp={
+    s:['ارسال...',1],w:['منتظر Actions...',1],
     p:[['پردازش.','پردازش..','پردازش...'][(i||0)%3],1],
-    done:[`✓ ${(model||'').replace('gemini-','').replace('-preview','')}`,0],
-    err:['خطا — دوباره امتحان کن',0], ready:['آماده',0]
+    done:[`✓ ${(model||'').replace('gemini-','').replace('-preview','').replace('openai/','')}`,0],
+    err:['❌ خطا — دوباره امتحان کن',0],ready:['آماده',0]
   };
-  const [txt,showBar]=map[st]||['آماده',0];
+  const[txt,showBar]=mp[st]||['آماده',0];
   el.innerHTML=`<span>${txt}</span>${showBar?bar:''}`;
   if(tl)tl.textContent=txt;
 }
