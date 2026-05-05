@@ -1,1 +1,1 @@
-{"id":"vhbj5qz6fhdmorkajwo","model":"gemini-2.5-pro","use_search":false,"use_puter":false,"puter_token":"","need_title":true,"contents":[{"role":"user","parts":[{"text":"کد Python بنویس"}]}]}
+{"id":"570igcysi5tmos438p6","model":"openai/gpt-5.2-chat","use_search":true,"use_puter":false,"puter_token":"","need_title":true,"contents":[{"role":"user","parts":[{"text":"آخرین اخبار AI"}]}]}
