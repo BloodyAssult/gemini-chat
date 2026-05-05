@@ -1,1 +1,1 @@
-{"id":"21j52ns0kjimosffmqu","model":"gemini-3.1-pro-preview","use_search":true,"use_puter":false,"puter_token":"","need_title":true,"contents":[{"role":"user","parts":[{"text":"آخرین اخبار AI"}]}]}
+{"id":"go9gd66x84cmosfkoqf","model":"gemini-3-flash-preview","use_search":false,"use_puter":false,"puter_token":"","need_title":false,"contents":[{"role":"user","parts":[{"text":"سلام!"}]},{"role":"user","parts":[{"text":"سلام"}]}]}
