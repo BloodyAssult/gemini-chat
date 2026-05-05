@@ -432,12 +432,17 @@ function setTitle(id,t){if(sessions[id]){sessions[id].title=t;saveSess();if(id==
 function toggleSb(){document.getElementById('sidebar').classList.toggle('collapsed');}
 
 // ── TOOLS ──
-function toggleSearch(){doSearch=!doSearch;document.getElementById('btn-search').classList.toggle('on',doSearch);}
+function toggleSearch(){
+  doSearch=!doSearch;
+  const btn=document.getElementById('btn-search');
+  if(doSearch){btn.classList.add('on');}else{btn.classList.remove('on');}
+}
 function toggleImgGen(){
   if(!cfg.puterToken){alert('تولید تصویر نیاز به Puter Token داره');showSetup();return;}
   doImgGen=!doImgGen;
-  document.getElementById('btn-imggen').classList.toggle('on',doImgGen);
-  if(doImgGen){curProvider='puter';document.getElementById('msel').value='gemini-3.1-flash-image-preview';applyProviderUI();}
+  const bimg=document.getElementById('btn-imggen');
+  if(doImgGen){bimg.classList.add('on');curProvider='puter';document.getElementById('msel').value='gemini-3.1-flash-image-preview';applyProviderUI();}
+  else{bimg.classList.remove('on');}
   else{document.getElementById('msel').value='gemini-3-flash-preview';}
 }
 function addImgs(input){
@@ -473,15 +478,22 @@ function setLoading(v){
 const GH='https://api.github.com';
 function ghH(){return{'Authorization':`token ${cfg.token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'};}
 async function ghGet(path){
-  const r=await fetch(`${GH}/repos/${cfg.user}/${cfg.repo}/contents/${path}?_=${Date.now()}`,{headers:ghH()});
-  if(!r.ok)return null;
+  let r;
+  try{r=await fetch(`${GH}/repos/${cfg.user}/${cfg.repo}/contents/${path}?_=${Date.now()}`,{headers:ghH()});}
+  catch(e){throw new Error('اتصال به GitHub ناموفق — اینترنت رو چک کن');}
+  if(r.status===401)throw new Error('GitHub Token نامعتبره — دوباره در تنظیمات وارد کن');
+  if(r.status===404)return null;
+  if(!r.ok)throw new Error('GitHub خطا داد: '+r.status);
   const d=await r.json();
   return{data:JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))))),sha:d.sha};
 }
 async function ghPut(path,content,sha){
   const body={message:`c:${path}`,content:btoa(unescape(encodeURIComponent(JSON.stringify(content))))};
   if(sha)body.sha=sha;
-  const r=await fetch(`${GH}/repos/${cfg.user}/${cfg.repo}/contents/${path}`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});
+  let r;
+  try{r=await fetch(`${GH}/repos/${cfg.user}/${cfg.repo}/contents/${path}`,{method:'PUT',headers:ghH(),body:JSON.stringify(body)});}
+  catch(e){throw new Error('اتصال به GitHub ناموفق — اینترنت رو چک کن');}
+  if(r.status===401)throw new Error('GitHub Token نامعتبره');
   return r.ok;
 }
 
@@ -529,7 +541,7 @@ async function doSend(){
       contents:    history
     };
     const ok=await ghPut('queue/prompt.json',payload,ex?.sha);
-    if(!ok)throw new Error('ارسال ناموفق — token یا repo رو چک کن');
+    if(!ok)throw new Error('ارسال ناموفق — GitHub token یا repo رو چک کن');
     setSbar('w');
 
     const {reply,srcs}=await pollResp(id);
