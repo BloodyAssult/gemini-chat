@@ -62,15 +62,17 @@ def call_puter(model, contents, token):
 
     print(f'  Puter: model={puter_model} msgs={len(messages)}')
 
-    # Try OpenAI-compatible endpoint first
     payload = {
         'model':    puter_model,
         'messages': messages,
         'stream':   False,
     }
 
+    # آدرس جدید و صحیح مستندات Puter
+    api_url = 'https://api.puter.com/puterai/openai/v1/chat/completions'
+
     r = requests.post(
-        'https://api.puter.com/v1/chat/completions',
+        api_url,
         headers={
             'Authorization': f'Bearer {token}',
             'Content-Type':  'application/json',
@@ -79,7 +81,7 @@ def call_puter(model, contents, token):
         timeout=90
     )
 
-    print(f'  Puter v1 status={r.status_code}')
+    print(f'  Puter status={r.status_code}')
 
     if r.status_code == 200:
         try:
@@ -88,34 +90,12 @@ def call_puter(model, contents, token):
             if text:
                 return {'candidates': [{'content': {'parts': [{'text': text}]}}]}
         except Exception as e:
-            print(f'  Puter v1 parse error: {e} body={r.text[:300]}')
-
-    # Fallback: try /puterai/chat/completions
-    print(f'  Trying /puterai/chat/completions ...')
-    r2 = requests.post(
-        'https://api.puter.com/puterai/chat/completions',
-        headers={
-            'Authorization': f'Bearer {token}',
-            'Content-Type':  'application/json',
-        },
-        json=payload,
-        timeout=90
-    )
-    print(f'  Puter puterai status={r2.status_code}')
-
-    if r2.status_code == 200:
-        try:
-            data2 = r2.json()
-            text2 = data2['choices'][0]['message']['content']
-            if text2:
-                return {'candidates': [{'content': {'parts': [{'text': text2}]}}]}
-        except Exception as e:
-            print(f'  Puter puterai parse error: {e}')
-
-    # Both failed — return error with details
-    err_body = r.text[:400] if r.status_code != 200 else r2.text[:400]
-    return {'error': {'code': r.status_code,
-                      'message': f'Puter API failed (status={r.status_code}): {err_body}'}}
+            print(f'  Puter parse error: {e} body={r.text[:300]}')
+            return {'error': {'code': 500, 'message': f'Parse error: {e}'}}
+    else:
+        err_body = r.text[:400]
+        return {'error': {'code': r.status_code,
+                          'message': f'Puter API failed (status={r.status_code}): {err_body}'}}
 
 def contents_to_messages(contents):
     messages = []
